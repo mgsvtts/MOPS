@@ -44,8 +44,10 @@ public class MerchItemsController : ControllerBase
     }
 
     [HttpDelete("{itemId}")]
-    public async Task Delete([FromQuery] Guid itemId, CancellationToken token)
+    public async Task<IActionResult> Delete([FromRoute] Guid itemId, CancellationToken token)
     {
         await _sender.Send(new DeleteMerchItemCommand(new MerchItemId(itemId)), token);
+
+        return NoContent();
     }
 }

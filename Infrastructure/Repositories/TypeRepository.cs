@@ -45,7 +45,7 @@ public class TypeRepository : ITypeRepository
 
     public async Task<Domain.TypeAggregate.Type> GetByIdAsync(TypeId id, CancellationToken token = default)
     {
-        var type = await _db.Types.FindAsync(new object?[] { id.Identity.ToString() }, cancellationToken: token);
+        var type = await _db.Types.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id.Identity.ToString(), token);
 
         return _mapper.Map<Domain.TypeAggregate.Type>(type);
     }

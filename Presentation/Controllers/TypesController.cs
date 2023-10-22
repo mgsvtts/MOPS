@@ -45,16 +45,20 @@ public class TypesController : ControllerBase
     }
 
     [HttpDelete("{typeId}")]
-    public async Task Delete([FromRoute] Guid typeId, CancellationToken token)
+    public async Task<IActionResult> Delete([FromRoute] Guid typeId, CancellationToken token)
     {
         await _sender.Send(new DeleteTypeCommand(new TypeId(typeId)), token);
+
+        return NoContent();
     }
 
     [HttpPatch]
-    public async Task Update([FromForm] UpdateTypeRequest request, CancellationToken token)
+    public async Task<TypeDto> Update([FromForm] UpdateTypeRequest request, CancellationToken token)
     {
         var command = _mapper.Map<UpdateTypeCommand>(request);
-        
-        await _sender.Send(command, token);
+
+        var type = await _sender.Send(command, token);
+
+        return _mapper.Map<TypeDto>(type);
     }
 }

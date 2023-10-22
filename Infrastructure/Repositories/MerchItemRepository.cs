@@ -40,7 +40,7 @@ public class MerchItemRepository : IMerchItemRepository
 
     public async Task<Domain.MerchItemAggregate.MerchItem?> GetByIdAsync(MerchItemId id, CancellationToken token = default)
     {
-        var item = await _db.MerchItems.FindAsync(new object?[] { id.Identity.ToString() }, cancellationToken: token);
+        var item = await _db.MerchItems.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id.Identity.ToString(), token);
 
         return _mapper.Map<Domain.MerchItemAggregate.MerchItem>(item);
     }
