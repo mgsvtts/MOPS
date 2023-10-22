@@ -1,7 +1,7 @@
 ﻿using Domain.Common;
 using Domain.Common.ValueObjects;
-using Domain.MerchItemAggregate.Entities.ValueObjects.Types;
 using Domain.MerchItemAggregate.ValueObjects;
+using Domain.TypeAggregate.ValueObjects;
 
 namespace Domain.MerchItemAggregate;
 

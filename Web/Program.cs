@@ -26,7 +26,7 @@ public class Program
         builder.Services.RegisterMapsterConfiguration();
         builder.Services.AddMediatR(config => config.RegisterServicesFromAssemblies(typeof(Application.Common.AssemblyReference).Assembly));
 
-        builder.Services.AddTransient<IMerchItemRepository, MerchItemRepository>();
+        builder.Services.AddInfrastructure();
 
         var app = builder.Build();
 

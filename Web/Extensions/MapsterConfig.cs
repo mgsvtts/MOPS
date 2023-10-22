@@ -1,10 +1,14 @@
-﻿using Application.Commands;
-using Contracts.MerchItem;
-using Contracts.MerchItem.Create;
+﻿using Application.Commands.MerchItems.CreateMerchItem;
+using Application.Commands.Types.CreateType;
+using Contracts.MerchItems;
+using Contracts.MerchItems.Create;
+using Contracts.Types;
+using Contracts.Types.Create;
 using Domain.Common.ValueObjects;
 using Domain.MerchItemAggregate;
-using Domain.MerchItemAggregate.Entities.ValueObjects.Types;
 using Domain.MerchItemAggregate.ValueObjects;
+using Domain.TypeAggregate;
+using Domain.TypeAggregate.ValueObjects;
 using Infrastructure.Models;
 using Mapster;
 using MapsterMapper;
@@ -55,6 +59,17 @@ public static class MapsterConfig
                                                     new MerchItemPrice(src.SelfPrice),
                                                     new MerchItemAmount(src.AmountLeft)));
 
+        TypeAdapterConfig<CreateTypeRequest, CreateTypeCommand>
+         .ForType()
+         .MapWith(src => new CreateTypeCommand(new Name(src.Name)));
+
+
+        TypeAdapterConfig<CreateTypeCommand, Domain.TypeAggregate.Type>
+         .ForType()
+         .MapWith(src => new Domain.TypeAggregate.Type(new TypeId(Guid.NewGuid()),
+                                                       src.Name));
+
+
         TypeAdapterConfig<CreateMerchItemCommand, Domain.MerchItemAggregate.MerchItem>
          .ForType()
          .MapWith(src => new Domain.MerchItemAggregate.MerchItem(new MerchItemId(Guid.NewGuid()),
@@ -65,69 +80,28 @@ public static class MapsterConfig
                                                                  src.SelfPrice,
                                                                  src.AmountLeft));
 
-        TypeAdapterConfig<Guid, MerchItemId>
-            .NewConfig()
-            .ConstructUsing(x => new MerchItemId(x));
+        TypeAdapterConfig<Domain.TypeAggregate.Type, Infrastructure.Models.Type>
+          .ForType()
+          .Map(dest => dest.Id, src => src.Id.Identity.ToString())
+          .Map(dest => dest.Name, src => src.Name.Value);
 
-        TypeAdapterConfig<string, MerchItemId>
-            .NewConfig()
-            .ConstructUsing(x => new MerchItemId(Guid.Parse(x)));
+        TypeAdapterConfig<Infrastructure.Models.Type, Domain.TypeAggregate.Type>
+          .ForType()
+          .MapWith(src => new Domain.TypeAggregate.Type(new TypeId(Guid.Parse(src.Id)),
+                                                        new Name(src.Name)));
 
-        TypeAdapterConfig<MerchItemId, string>
-            .NewConfig()
-            .ConstructUsing(x => x.Identity.ToString());
+        TypeAdapterConfig<Domain.TypeAggregate.Type, Infrastructure.Models.Type>
+          .ForType()
+          .MapWith(src => new Infrastructure.Models.Type
+          {
+              Id = src.Id.Identity.ToString(),
+              Name = src.Name.Value
+          });
 
-        TypeAdapterConfig<Guid, TypeId>
-            .NewConfig()
-            .ConstructUsing(x => new TypeId(x));
 
-        TypeAdapterConfig<string, TypeId>
-            .NewConfig()
-            .ConstructUsing(x => new TypeId(Guid.Parse(x)));
-
-        TypeAdapterConfig<TypeId, string>
-            .NewConfig()
-            .ConstructUsing(x => x.Identity.ToString());
-
-        TypeAdapterConfig<MerchItemId, Guid>
-            .NewConfig()
-            .ConstructUsing(x => x.Identity);
-
-        TypeAdapterConfig<TypeId, Guid>
-            .NewConfig()
-            .ConstructUsing(x => x.Identity);
-
-        TypeAdapterConfig<decimal, MerchItemPrice>
-            .NewConfig()
-            .ConstructUsing(x => new MerchItemPrice(x));
-
-        TypeAdapterConfig<string, Name>
-            .NewConfig()
-            .ConstructUsing(x => new Name(x));
-
-        TypeAdapterConfig<string, Description>
-            .NewConfig()
-            .ConstructUsing(x => new Description(x));
-
-        TypeAdapterConfig<Name, string>
-            .NewConfig()
-            .ConstructUsing(x => x.Value);
-
-        TypeAdapterConfig<Description, string>
-            .NewConfig()
-            .ConstructUsing(x => x.Value);
-
-        TypeAdapterConfig<MerchItemPrice, decimal>
-           .NewConfig()
-           .ConstructUsing(x => x.Value);
-
-        TypeAdapterConfig<MerchItemAmount, int>
-          .NewConfig()
-          .ConstructUsing(x => x.Value);
-
-        TypeAdapterConfig<int, MerchItemAmount>
-            .NewConfig()
-            .ConstructUsing(x => new MerchItemAmount(x));
+        TypeAdapterConfig<Domain.TypeAggregate.Type, TypeDto>
+         .ForType()
+         .MapWith(src => new TypeDto(src.Id.Identity, src.Name.Value));
 
         TypeAdapterConfig.GlobalSettings.Scan(Assembly.GetExecutingAssembly());
 

@@ -1,7 +1,8 @@
 using Application.Commands;
-using Application.GetAllMerchItems;
-using Contracts.MerchItem;
-using Contracts.MerchItem.Create;
+using Application.Commands.MerchItems.CreateMerchItem;
+using Application.Queries.MerchItems.GetAllMerchItems;
+using Contracts.MerchItems;
+using Contracts.MerchItems.Create;
 using Domain.MerchItemAggregate;
 using MapsterMapper;
 using MediatR;

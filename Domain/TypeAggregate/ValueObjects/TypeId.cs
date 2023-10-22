@@ -1,4 +1,4 @@
-﻿namespace Domain.MerchItemAggregate.Entities.ValueObjects.Types;
+﻿namespace Domain.TypeAggregate.ValueObjects;
 public sealed record TypeId
 {
     public Guid Identity { get; init; }

@@ -1,10 +1,9 @@
 ﻿using Domain.Common;
 using Domain.Common.ValueObjects;
-using Domain.MerchItemAggregate.Entities.ValueObjects.Types;
+using Domain.TypeAggregate.ValueObjects;
+namespace Domain.TypeAggregate;
 
-namespace Domain.MerchItemAggregate.Entities;
-
-public class Type : Entity<TypeId>
+public class Type : AggregateRoot<TypeId>
 {
     public Name Name { get; private set; }
 
