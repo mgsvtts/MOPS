@@ -7,27 +7,13 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Models;
 
-[Table("merch_items")]
 public sealed class MerchItem
 {
-    [Column("id")]
-    public string Id { get; set; }
-
-    [Column("type_id")]
-    public string TypeId { get; set; }
-
-    [Column("name")]
-    public string Name { get; set; }
-
-    [Column("description")]
-    public string? Description { get; set; }
-
-    [Column("price")]
-    public decimal Price { get; set; }
-
-    [Column("self_price")]
-    public decimal SelfPrice { get; set; }
-
-    [Column("amount")]
-    public int Amount { get; set; }
+    public string id { get; set; }
+    public string type_id { get; set; }
+    public string name { get; set; }
+    public string description { get; set; }
+    public decimal price { get; set; }
+    public decimal self_price { get; set; }
+    public int amount { get; set; }
 }

@@ -1,9 +1,9 @@
-﻿using Domain.MerchItemAggregate;
+﻿using Dapper;
+using Domain.MerchItemAggregate;
 using Domain.MerchItemAggregate.Repositories;
 using Domain.MerchItemAggregate.ValueObjects;
 using Infrastructure.Models;
 using MapsterMapper;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,33 +24,43 @@ public class MerchItemRepository : IMerchItemRepository
 
     public async Task AddAsync(Domain.MerchItemAggregate.MerchItem item, CancellationToken cancellationToken = default)
     {
-        var dbItem = _mapper.Map<Models.MerchItem>(item);
+        // var dbItem = _mapper.Map<Models.MerchItem>(item);
 
-        await _db.AddAsync(dbItem, cancellationToken);
+        // await _db.AddAsync(dbItem, cancellationToken);
 
-        await _db.SaveChangesAsync(cancellationToken);
+        // await _db.SaveChangesAsync(cancellationToken);
+
+        throw new Exception();
     }
 
     public async Task<List<Domain.MerchItemAggregate.MerchItem>> GetAllAsync(CancellationToken token = default)
     {
-        var items = await _db.MerchItems.ToListAsync(token);
+        var query = "SELECT * FROM merch_items";
+
+        using var connection = _db.CreateConnection();
+
+        var items = await connection.QueryAsync<Models.MerchItem>(query);
 
         return _mapper.Map<List<Domain.MerchItemAggregate.MerchItem>>(items);
     }
 
     public async Task<Domain.MerchItemAggregate.MerchItem?> GetByIdAsync(MerchItemId id, CancellationToken token = default)
     {
-        var item = await _db.MerchItems.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id.Identity.ToString(), token);
+        var query = "SELECT * FROM merch_items LIMIT(1)";
+
+        using var connection = _db.CreateConnection();
+
+        var item = await connection.QueryFirstOrDefaultAsync<Models.MerchItem>(query);
 
         return _mapper.Map<Domain.MerchItemAggregate.MerchItem>(item);
     }
 
     public async Task DeleteAsync(Domain.MerchItemAggregate.MerchItem item, CancellationToken token = default)
     {
-        var dbItem = _mapper.Map<Models.MerchItem>(item);
+        var query = "DELETE FROM merch_items WHERE id = @Id";
 
-        _db.MerchItems.Remove(dbItem);
+        using var connection = _db.CreateConnection();
 
-        await _db.SaveChangesAsync(token);
+        await connection.ExecuteAsync(query, new { Id = item.Id.Identity.ToString() });
     }
 }

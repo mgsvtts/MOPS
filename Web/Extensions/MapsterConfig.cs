@@ -37,25 +37,25 @@ public static class MapsterConfig
        .ForType()
        .MapWith(src => new Infrastructure.Models.MerchItem
        {
-         Id = src.Id.Identity.ToString(),
-         TypeId = src.TypeId.Identity.ToString(),
-         Name = src.Name.Value,
-         Description = src.Description != null ? src.Description.Value.ToString() : null,
-         Price = src.Price.Value,
-         SelfPrice = src.SelfPrice.Value,
-         Amount = src.AmountLeft.Value
+         id = src.Id.Identity.ToString(),
+         type_id = src.TypeId.Identity.ToString(),
+         name = src.Name.Value,
+         description = src.Description != null ? src.Description.Value.ToString() : null,
+         price = src.Price.Value,
+         self_price = src.SelfPrice.Value,
+         amount = src.AmountLeft.Value
        });
 
 
     TypeAdapterConfig<Infrastructure.Models.MerchItem, Domain.MerchItemAggregate.MerchItem>
        .ForType()
-       .MapWith(src => new Domain.MerchItemAggregate.MerchItem(new MerchItemId(Guid.Parse(src.Id)),
-                                                               new TypeId(Guid.Parse(src.TypeId)),
-                                                               new Name(src.Name),
-                                                               src.Description != null ? new Description(src.Description) : null,
-                                                               new MerchItemPrice(src.Price),
-                                                               new MerchItemPrice(src.SelfPrice),
-                                                               new MerchItemAmount(src.Amount)));
+       .MapWith(src => new Domain.MerchItemAggregate.MerchItem(new MerchItemId(Guid.Parse(src.id)),
+                                                               new TypeId(Guid.Parse(src.type_id)),
+                                                               new Name(src.name),
+                                                               src.description != null ? new Description(src.description) : null,
+                                                               new MerchItemPrice(src.price),
+                                                               new MerchItemPrice(src.self_price),
+                                                               new MerchItemAmount(src.amount)));
 
     TypeAdapterConfig<CreateMerchItemRequest, CreateMerchItemCommand>
      .ForType()

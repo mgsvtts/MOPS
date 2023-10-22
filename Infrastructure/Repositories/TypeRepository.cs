@@ -3,7 +3,6 @@ using Domain.TypeAggregate.Repositories;
 using Domain.TypeAggregate.ValueObjects;
 using Infrastructure.Models;
 using MapsterMapper;
-using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
@@ -20,44 +19,54 @@ public class TypeRepository : ITypeRepository
 
     public async Task<List<Domain.TypeAggregate.Type>> GetAllAsync(CancellationToken token = default)
     {
-        var types = await _db.Types.ToListAsync(token);
+        // var types = await _db.Types.ToListAsync(token);
 
-        return _mapper.Map<List<Domain.TypeAggregate.Type>>(types);
+        // return _mapper.Map<List<Domain.TypeAggregate.Type>>(types);
+
+        throw new Exception();
     }
 
     public async Task AddAsync(Domain.TypeAggregate.Type type, CancellationToken token = default)
     {
-        var dbType = _mapper.Map<Models.Type>(type);
+        // var dbType = _mapper.Map<Models.Type>(type);
 
-        await _db.AddAsync(dbType, token);
+        // await _db.AddAsync(dbType, token);
 
-        await _db.SaveChangesAsync(token);
+        // await _db.SaveChangesAsync(token);
+
+        throw new Exception();
     }
 
     public async Task DeleteAsync(Domain.TypeAggregate.Type type, CancellationToken token = default)
     {
-        var dbType = _mapper.Map<Models.Type>(type);
+        // var dbType = _mapper.Map<Models.Type>(type);
 
-        _db.Types.Remove(dbType);
+        // _db.Types.Remove(dbType);
 
-        await _db.SaveChangesAsync(token);
+        // await _db.SaveChangesAsync(token);
+
+        throw new Exception();
     }
 
     public async Task<Domain.TypeAggregate.Type> GetByIdAsync(TypeId id, CancellationToken token = default)
     {
-        var type = await _db.Types.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id.Identity.ToString(), token);
+        // var type = await _db.Types.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id.Identity.ToString(), token);
 
-        return _mapper.Map<Domain.TypeAggregate.Type>(type);
+        // return _mapper.Map<Domain.TypeAggregate.Type>(type);
+
+        throw new Exception();
     }
 
     public async Task<Domain.TypeAggregate.Type> UpdateAsync(Domain.TypeAggregate.Type type, CancellationToken token = default)
     {
-        var dbType = _mapper.Map<Models.Type>(type);
+        // var dbType = _mapper.Map<Models.Type>(type);
 
-        _db.Types.Update(dbType);
+        // _db.Types.Update(dbType);
 
-        await _db.SaveChangesAsync(token);
+        // await _db.SaveChangesAsync(token);
 
-        return _mapper.Map<Domain.TypeAggregate.Type>(dbType);
+        // return _mapper.Map<Domain.TypeAggregate.Type>(dbType);
+
+        throw new Exception();
     }
 }
