@@ -11,4 +11,5 @@ public interface IMerchItemRepository
     public Task AddAsync(MerchItem item, CancellationToken cancellationToken = default);
     public Task<List<MerchItem>> GetAllAsync(CancellationToken token = default);
     public Task<MerchItem?> GetByIdAsync(MerchItemId id, CancellationToken token = default);
+    public Task DeleteAsync(MerchItem id, CancellationToken token = default);
 }

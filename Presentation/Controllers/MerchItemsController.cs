@@ -1,9 +1,11 @@
 using Application.Commands;
 using Application.Commands.MerchItems.CreateMerchItem;
+using Application.Commands.MerchItems.DeleteMerchItem;
 using Application.Queries.MerchItems.GetAllMerchItems;
 using Contracts.MerchItems;
 using Contracts.MerchItems.Create;
 using Domain.MerchItemAggregate;
+using Domain.MerchItemAggregate.ValueObjects;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -32,12 +34,18 @@ public class MerchItemsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<MerchItemDto> Create([FromForm]CreateMerchItemRequest request, CancellationToken token = default)
+    public async Task<MerchItemDto> Create([FromForm] CreateMerchItemRequest request, CancellationToken token = default)
     {
         var command = _mapper.Map<CreateMerchItemCommand>(request);
 
         var item = await _sender.Send(command, token);
 
         return _mapper.Map<MerchItemDto>(item);
+    }
+
+    [HttpDelete("{itemId}")]
+    public async Task Delete([FromQuery] Guid itemId, CancellationToken token)
+    {
+        await _sender.Send(new DeleteMerchItemCommand(new MerchItemId(itemId)), token);
     }
 }

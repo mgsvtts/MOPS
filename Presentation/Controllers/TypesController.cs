@@ -1,8 +1,12 @@
 using Application.Commands.Types.CreateType;
+using Application.Commands.Types.DeleteType;
+using Application.Commands.Types.UpdateType;
 using Application.Queries.Types.GetAllTypes;
 using Contracts.Types;
 using Contracts.Types.Create;
+using Contracts.Types.Update;
 using Domain.MerchItemAggregate.Entities;
+using Domain.TypeAggregate.ValueObjects;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -41,8 +45,16 @@ public class TypesController : ControllerBase
     }
 
     [HttpDelete("{typeId}")]
-    public async Task Delete([FromRoute]Guid typeId, CancellationToken token)
+    public async Task Delete([FromRoute] Guid typeId, CancellationToken token)
     {
+        await _sender.Send(new DeleteTypeCommand(new TypeId(typeId)), token);
+    }
+
+    [HttpPatch]
+    public async Task Update([FromForm] UpdateTypeRequest request, CancellationToken token)
+    {
+        var command = _mapper.Map<UpdateTypeCommand>(request);
         
+        await _sender.Send(command, token);
     }
 }

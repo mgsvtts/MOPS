@@ -25,7 +25,7 @@ public class MerchItemRepository : IMerchItemRepository
     public async Task AddAsync(Domain.MerchItemAggregate.MerchItem item, CancellationToken cancellationToken = default)
     {
         var dbItem = _mapper.Map<Models.MerchItem>(item);
-        
+
         await _db.AddAsync(dbItem, cancellationToken);
 
         await _db.SaveChangesAsync(cancellationToken);
@@ -43,5 +43,14 @@ public class MerchItemRepository : IMerchItemRepository
         var item = await _db.MerchItems.FindAsync(new object?[] { id.Identity.ToString() }, cancellationToken: token);
 
         return _mapper.Map<Domain.MerchItemAggregate.MerchItem>(item);
+    }
+
+    public async Task DeleteAsync(Domain.MerchItemAggregate.MerchItem item, CancellationToken token = default)
+    {
+        var dbItem = _mapper.Map<Models.MerchItem>(item);
+
+        _db.MerchItems.Remove(dbItem);
+
+        await _db.SaveChangesAsync(token);
     }
 }
