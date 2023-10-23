@@ -35,16 +35,6 @@ public class MerchItemsController : ControllerBase
         return _mapper.Map<IEnumerable<MerchItemDto>>(result);
     }
 
-    [HttpGet("calculate")]
-    public async Task<CalculateItemResponse> Calculate(IEnumerable<CalculateItemRequest> items, CancellationToken token = default)
-    {
-        var command = _mapper.Map<CalculateMerchItemCommand>(items);
-
-        var result = await _sender.Send(command, token);
-
-        return _mapper.Map<CalculateItemResponse>(result);
-    }
-
     [HttpPost]
     public async Task<MerchItemDto> Create([FromForm] CreateMerchItemRequest request, CancellationToken token = default)
     {
@@ -54,6 +44,17 @@ public class MerchItemsController : ControllerBase
 
         return _mapper.Map<MerchItemDto>(item);
     }
+
+    [HttpPost("calculate")]
+    public async Task<CalculateItemResponse> Calculate(IEnumerable<CalculateItemRequest> items, CancellationToken token = default)
+    {
+        var command = _mapper.Map<CalculateMerchItemCommand>(items);
+
+        var result = await _sender.Send(command, token);
+
+        return _mapper.Map<CalculateItemResponse>(result);
+    }
+
 
     [HttpPatch]
     public async Task<MerchItemDto> Update([FromForm] UpdateMerchItemRequest request, CancellationToken token)
