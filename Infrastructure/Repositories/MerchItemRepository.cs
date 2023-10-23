@@ -1,16 +1,10 @@
 ﻿using Dapper;
-using Domain.MerchItemAggregate;
 using Domain.MerchItemAggregate.Repositories;
 using Domain.MerchItemAggregate.ValueObjects;
-using Infrastructure.Models;
 using MapsterMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories;
+
 public class MerchItemRepository : IMerchItemRepository
 {
     private readonly DbContext _db;
@@ -22,18 +16,28 @@ public class MerchItemRepository : IMerchItemRepository
         _mapper = mapper;
     }
 
-    public async Task AddAsync(Domain.MerchItemAggregate.MerchItem item, CancellationToken cancellationToken = default)
+    public async Task AddAsync(Domain.MerchItemAggregate.MerchItem item)
     {
-        // var dbItem = _mapper.Map<Models.MerchItem>(item);
+        var query = "INSERT INTO merch_items (id, type_id, name, description, price, self_price, amount)" +
+                    "VALUES (@Id, @TypeId, @Name, @Description, @Price, @SelfPrice, @Amount)";
 
-        // await _db.AddAsync(dbItem, cancellationToken);
+        var parameters = new
+        {
+            Id = item.Id.Identity.ToString(),
+            TypeId = item.TypeId.Identity.ToString(),
+            Name = item.Name.Value,
+            Description = item.Description?.Value,
+            Price = item.Price.Value.ToString(),
+            SelfPrice = item.SelfPrice.Value.ToString(),
+            Amount = item.AmountLeft.Value.ToString()
+        };
 
-        // await _db.SaveChangesAsync(cancellationToken);
+        using var connection = _db.CreateConnection();
 
-        throw new Exception();
+        await connection.ExecuteAsync(query, parameters);
     }
 
-    public async Task<List<Domain.MerchItemAggregate.MerchItem>> GetAllAsync(CancellationToken token = default)
+    public async Task<List<Domain.MerchItemAggregate.MerchItem>> GetAllAsync()
     {
         var query = "SELECT * FROM merch_items";
 
@@ -44,7 +48,7 @@ public class MerchItemRepository : IMerchItemRepository
         return _mapper.Map<List<Domain.MerchItemAggregate.MerchItem>>(items);
     }
 
-    public async Task<Domain.MerchItemAggregate.MerchItem?> GetByIdAsync(MerchItemId id, CancellationToken token = default)
+    public async Task<Domain.MerchItemAggregate.MerchItem?> GetByIdAsync(MerchItemId id)
     {
         var query = "SELECT * FROM merch_items LIMIT(1)";
 
@@ -55,12 +59,39 @@ public class MerchItemRepository : IMerchItemRepository
         return _mapper.Map<Domain.MerchItemAggregate.MerchItem>(item);
     }
 
-    public async Task DeleteAsync(Domain.MerchItemAggregate.MerchItem item, CancellationToken token = default)
+    public async Task DeleteAsync(Domain.MerchItemAggregate.MerchItem item)
     {
         var query = "DELETE FROM merch_items WHERE id = @Id";
 
         using var connection = _db.CreateConnection();
 
         await connection.ExecuteAsync(query, new { Id = item.Id.Identity.ToString() });
+    }
+
+    public async Task UpdateAsync(Domain.MerchItemAggregate.MerchItem item)
+    {
+        var query = "UPDATE merch_items SET " +
+                    "type_id = @TypeId," +
+                    "name = @Name," +
+                    "description = @Description," +
+                    "price = @Price," +
+                    "self_price = @SelfPrice," +
+                    "amount = @Amount " +
+                    "WHERE id = @Id";
+
+        var parameters = new
+        {
+            Id = item.Id.Identity.ToString(),
+            TypeId = item.TypeId.Identity.ToString(),
+            Name = item.Name.Value,
+            Description = item.Description?.Value,
+            Price = item.Price.Value.ToString(),
+            SelfPrice = item.SelfPrice.Value.ToString(),
+            Amount = item.AmountLeft.Value.ToString()
+        };
+
+        using var connection = _db.CreateConnection();
+
+        await connection.ExecuteAsync(query, parameters);
     }
 }

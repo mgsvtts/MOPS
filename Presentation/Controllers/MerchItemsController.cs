@@ -1,10 +1,10 @@
-using Application.Commands;
 using Application.Commands.MerchItems.CreateMerchItem;
 using Application.Commands.MerchItems.DeleteMerchItem;
+using Application.Commands.MerchItems.UpdateMerchItem;
 using Application.Queries.MerchItems.GetAllMerchItems;
 using Contracts.MerchItems;
 using Contracts.MerchItems.Create;
-using Domain.MerchItemAggregate;
+using Contracts.MerchItems.Update;
 using Domain.MerchItemAggregate.ValueObjects;
 using MapsterMapper;
 using MediatR;
@@ -49,5 +49,15 @@ public class MerchItemsController : ControllerBase
         await _sender.Send(new DeleteMerchItemCommand(new MerchItemId(itemId)), token);
 
         return NoContent();
+    }
+
+    [HttpPatch]
+    public async Task<MerchItemDto> Update([FromForm] UpdateMerchItemRequest request, CancellationToken token)
+    {
+        var command = _mapper.Map<UpdateMerchItemCommand>(request);
+
+        var result = await _sender.Send(command, token);
+
+        return _mapper.Map<MerchItemDto>(result);
     }
 }

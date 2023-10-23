@@ -14,9 +14,9 @@ public class DeleteTypeCommandHandler : IRequestHandler<DeleteTypeCommand>
 
     public async Task Handle(DeleteTypeCommand request, CancellationToken cancellationToken)
     {
-        var type = await _typeRepository.GetByIdAsync(request.Id, cancellationToken)
+        var type = await _typeRepository.GetByIdAsync(request.Id)
                    ?? throw new InvalidOperationException($"Cannot find type with id {request.Id.Identity}");
 
-        await _typeRepository.DeleteAsync(type, cancellationToken);
+        await _typeRepository.DeleteAsync(type);
     }
 }

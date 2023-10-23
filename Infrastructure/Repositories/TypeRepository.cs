@@ -1,7 +1,6 @@
-using Domain.TypeAggregate;
+using Dapper;
 using Domain.TypeAggregate.Repositories;
 using Domain.TypeAggregate.ValueObjects;
-using Infrastructure.Models;
 using MapsterMapper;
 
 namespace Infrastructure.Repositories;
@@ -17,56 +16,64 @@ public class TypeRepository : ITypeRepository
         _db = db;
     }
 
-    public async Task<List<Domain.TypeAggregate.Type>> GetAllAsync(CancellationToken token = default)
+    public async Task<List<Domain.TypeAggregate.Type>> GetAllAsync()
     {
-        // var types = await _db.Types.ToListAsync(token);
+        var query = "SELECT * FROM types";
 
-        // return _mapper.Map<List<Domain.TypeAggregate.Type>>(types);
+        using var connection = _db.CreateConnection();
 
-        throw new Exception();
+        var items = await connection.QueryAsync<Models.Type>(query);
+
+        return _mapper.Map<List<Domain.TypeAggregate.Type>>(items);
     }
 
-    public async Task AddAsync(Domain.TypeAggregate.Type type, CancellationToken token = default)
+    public async Task AddAsync(Domain.TypeAggregate.Type type)
     {
-        // var dbType = _mapper.Map<Models.Type>(type);
+        var query = "INSERT INTO types (id, name)" +
+                    "VALUES (@Id, @Name)";
 
-        // await _db.AddAsync(dbType, token);
+        var parameters = new
+        {
+            Id = type.Id.Identity.ToString(),
+            Name = type.Name.Value.ToString()
+        };
 
-        // await _db.SaveChangesAsync(token);
+        using var connection = _db.CreateConnection();
 
-        throw new Exception();
+        await connection.ExecuteAsync(query, parameters);
     }
 
-    public async Task DeleteAsync(Domain.TypeAggregate.Type type, CancellationToken token = default)
+    public async Task DeleteAsync(Domain.TypeAggregate.Type type)
     {
-        // var dbType = _mapper.Map<Models.Type>(type);
+        var query = "DELETE FROM types WHERE id = @Id";
 
-        // _db.Types.Remove(dbType);
+        using var connection = _db.CreateConnection();
 
-        // await _db.SaveChangesAsync(token);
-
-        throw new Exception();
+        await connection.ExecuteAsync(query, new { Id = type.Id.Identity.ToString() });
     }
 
-    public async Task<Domain.TypeAggregate.Type> GetByIdAsync(TypeId id, CancellationToken token = default)
+    public async Task<Domain.TypeAggregate.Type> GetByIdAsync(TypeId id)
     {
-        // var type = await _db.Types.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id.Identity.ToString(), token);
+        var query = "SELECT * FROM types WHERE id = @Id";
 
-        // return _mapper.Map<Domain.TypeAggregate.Type>(type);
+        using var connection = _db.CreateConnection();
 
-        throw new Exception();
+        var type = await connection.QueryFirstOrDefaultAsync<Models.Type>(query, new { Id = id.Identity.ToString() });
+
+        return _mapper.Map<Domain.TypeAggregate.Type>(type);
     }
 
-    public async Task<Domain.TypeAggregate.Type> UpdateAsync(Domain.TypeAggregate.Type type, CancellationToken token = default)
+    public async Task UpdateAsync(Domain.TypeAggregate.Type type)
     {
-        // var dbType = _mapper.Map<Models.Type>(type);
+        var query = "UPDATE types SET name = @Name";
 
-        // _db.Types.Update(dbType);
+        var parameters = new
+        {
+            Name = type.Name.Value.ToString()
+        };
 
-        // await _db.SaveChangesAsync(token);
+        using var connection = _db.CreateConnection();
 
-        // return _mapper.Map<Domain.TypeAggregate.Type>(dbType);
-
-        throw new Exception();
+        await connection.ExecuteAsync(query, parameters);
     }
 }

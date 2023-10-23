@@ -17,6 +17,6 @@ internal sealed class GetAllTypesQueryHandler : IRequestHandler<GetAllTypesQuery
 
     public async Task<IEnumerable<Domain.TypeAggregate.Type>> Handle(GetAllTypesQuery request, CancellationToken cancellationToken)
     {
-        return await _repository.GetAllAsync(cancellationToken);
+        return await _repository.GetAllAsync();
     }
 }

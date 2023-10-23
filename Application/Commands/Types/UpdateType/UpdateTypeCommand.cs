@@ -1,5 +1,4 @@
 using Domain.Common.ValueObjects;
-using Domain.TypeAggregate;
 using Domain.TypeAggregate.ValueObjects;
 using MediatR;
 

@@ -1,4 +1,3 @@
-using Domain.TypeAggregate;
 using Domain.TypeAggregate.Repositories;
 using MapsterMapper;
 using MediatR;
@@ -20,7 +19,7 @@ public class UpdateTypeCommandHandler : IRequestHandler<UpdateTypeCommand, Domai
     {
         var type = _mapper.Map<Domain.TypeAggregate.Type>(request);
 
-        await _typeRepository.UpdateAsync(type, cancellationToken);
+        await _typeRepository.UpdateAsync(type);
 
         return type;
     }

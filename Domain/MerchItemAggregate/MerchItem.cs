@@ -35,4 +35,51 @@ public class MerchItem : AggregateRoot<MerchItemId>
         SelfPrice = selfPrice ?? new MerchItemPrice();
         AmountLeft = amountLeft ?? new MerchItemAmount();
     }
+
+    public float GetBenefitPercent()
+    {
+        return (float)(Price.Value / SelfPrice.Value);
+    }
+
+    public MerchItem WithTypeId(TypeId typeId)
+    {
+        TypeId = typeId;
+
+        return this;
+    }
+
+    public MerchItem WithName(Name name)
+    {
+        Name = name;
+
+        return this;
+    }
+
+    public MerchItem WithDescription(Description? description)
+    {
+        Description = description;
+
+        return this;
+    }
+
+    public MerchItem WithPrice(MerchItemPrice price)
+    {
+        Price = price;
+
+        return this;
+    }
+
+    public MerchItem WithSelfPrice(MerchItemPrice selfPrice)
+    {
+        SelfPrice = selfPrice;
+
+        return this;
+    }
+
+    public MerchItem WithAmount(MerchItemAmount amount)
+    {
+        AmountLeft = amount;
+
+        return this;
+    }
 }

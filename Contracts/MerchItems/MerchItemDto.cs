@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Contracts.MerchItems;
+﻿namespace Contracts.MerchItems;
 
 public sealed record MerchItemDto(Guid Id,
                                   Guid TypeId,
@@ -12,4 +6,5 @@ public sealed record MerchItemDto(Guid Id,
                                   string? Description,
                                   decimal Price,
                                   decimal SelfPrice,
-                                  int AmountLeft);
+                                  int AmountLeft,
+                                  string Benefit);

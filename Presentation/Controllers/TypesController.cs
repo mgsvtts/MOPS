@@ -5,7 +5,6 @@ using Application.Queries.Types.GetAllTypes;
 using Contracts.Types;
 using Contracts.Types.Create;
 using Contracts.Types.Update;
-using Domain.MerchItemAggregate.Entities;
 using Domain.TypeAggregate.ValueObjects;
 using MapsterMapper;
 using MediatR;

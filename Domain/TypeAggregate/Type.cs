@@ -1,6 +1,7 @@
 ﻿using Domain.Common;
 using Domain.Common.ValueObjects;
 using Domain.TypeAggregate.ValueObjects;
+
 namespace Domain.TypeAggregate;
 
 public class Type : AggregateRoot<TypeId>

@@ -14,9 +14,9 @@ public class DeleteMerchItemCommandHandler : IRequestHandler<DeleteMerchItemComm
 
     public async Task Handle(DeleteMerchItemCommand request, CancellationToken cancellationToken)
     {
-        var item = await _merchRepository.GetByIdAsync(request.Id, cancellationToken)
+        var item = await _merchRepository.GetByIdAsync(request.Id)
                    ?? throw new InvalidOperationException($"Cannot find merch item with id {request.Id.Identity}");
 
-        await _merchRepository.DeleteAsync(item, cancellationToken);
+        await _merchRepository.DeleteAsync(item);
     }
 }

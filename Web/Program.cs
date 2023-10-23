@@ -1,9 +1,5 @@
-using Domain.MerchItemAggregate.Repositories;
 using Infrastructure;
-using Infrastructure.Repositories;
-using Microsoft.Extensions.Options;
 using Presentation.Controllers;
-using System.Reflection.Metadata;
 using Web.Extensions;
 
 namespace Web;
@@ -19,7 +15,7 @@ public class Program
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-        
+
         builder.Services.AddSingleton<DbContext>();
 
         builder.Services.RegisterMapsterConfiguration();

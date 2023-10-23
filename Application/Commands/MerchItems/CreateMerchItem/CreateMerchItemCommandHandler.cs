@@ -2,13 +2,9 @@
 using Domain.MerchItemAggregate.Repositories;
 using MapsterMapper;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Commands.MerchItems.CreateMerchItem;
+
 internal class CreateMerchItemCommandHandler : IRequestHandler<CreateMerchItemCommand, MerchItem>
 {
     private readonly IMapper _mapper;
@@ -24,7 +20,7 @@ internal class CreateMerchItemCommandHandler : IRequestHandler<CreateMerchItemCo
     {
         var item = _mapper.Map<MerchItem>(request);
 
-        await _repository.AddAsync(item, cancellationToken);
+        await _repository.AddAsync(item);
 
         return item;
     }

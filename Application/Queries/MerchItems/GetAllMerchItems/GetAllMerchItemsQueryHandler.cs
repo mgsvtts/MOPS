@@ -1,13 +1,9 @@
 ﻿using Domain.MerchItemAggregate;
 using Domain.MerchItemAggregate.Repositories;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Queries.MerchItems.GetAllMerchItems;
+
 internal sealed class GetAllMerchItemsQueryHandler : IRequestHandler<GetAllMerchItemsQuery, List<MerchItem>>
 {
     private readonly IMerchItemRepository _repository;
@@ -19,6 +15,6 @@ internal sealed class GetAllMerchItemsQueryHandler : IRequestHandler<GetAllMerch
 
     public async Task<List<MerchItem>> Handle(GetAllMerchItemsQuery request, CancellationToken cancellationToken)
     {
-        return await _repository.GetAllAsync(cancellationToken);
+        return await _repository.GetAllAsync();
     }
 }
