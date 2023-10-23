@@ -13,4 +13,6 @@ public interface IMerchItemRepository
     public Task DeleteAsync(MerchItem id);
 
     public Task UpdateAsync(MerchItem item);
+
+    public Task<List<MerchItem>> GetAllByIdsAsync(IEnumerable<MerchItemId> ids);
 }

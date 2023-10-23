@@ -25,6 +25,14 @@ public class TypesController : ControllerBase
         _sender = sender;
     }
 
+    [HttpGet]
+    public async Task<IEnumerable<TypeDto>> GetAll(CancellationToken token)
+    {
+        var types = await _sender.Send(new GetAllTypesQuery(), token);
+
+        return _mapper.Map<IEnumerable<TypeDto>>(types);
+    }
+
     [HttpPost]
     public async Task<TypeDto> Create([FromForm] CreateTypeRequest request, CancellationToken token)
     {
@@ -35,22 +43,6 @@ public class TypesController : ControllerBase
         return _mapper.Map<TypeDto>(result);
     }
 
-    [HttpGet]
-    public async Task<IEnumerable<TypeDto>> GetAll(CancellationToken token)
-    {
-        var types = await _sender.Send(new GetAllTypesQuery(), token);
-
-        return _mapper.Map<IEnumerable<TypeDto>>(types);
-    }
-
-    [HttpDelete("{typeId}")]
-    public async Task<IActionResult> Delete([FromRoute] Guid typeId, CancellationToken token)
-    {
-        await _sender.Send(new DeleteTypeCommand(new TypeId(typeId)), token);
-
-        return NoContent();
-    }
-
     [HttpPatch]
     public async Task<TypeDto> Update([FromForm] UpdateTypeRequest request, CancellationToken token)
     {
@@ -59,5 +51,13 @@ public class TypesController : ControllerBase
         var type = await _sender.Send(command, token);
 
         return _mapper.Map<TypeDto>(type);
+    }
+
+    [HttpDelete("{typeId}")]
+    public async Task<IActionResult> Delete([FromRoute] Guid typeId, CancellationToken token)
+    {
+        await _sender.Send(new DeleteTypeCommand(new TypeId(typeId)), token);
+
+        return NoContent();
     }
 }

@@ -48,6 +48,19 @@ public class MerchItemRepository : IMerchItemRepository
         return _mapper.Map<List<Domain.MerchItemAggregate.MerchItem>>(items);
     }
 
+    public async Task<List<Domain.MerchItemAggregate.MerchItem>> GetAllByIdsAsync(IEnumerable<MerchItemId> ids)
+    {
+        var query = "SELECT * FROM merch_items WHERE id IN @Ids";
+
+        var queryIds = ids.Select(x => x.Identity.ToString()).ToArray();
+
+        using var connection = _db.CreateConnection();
+
+        var items = await connection.QueryAsync<Models.MerchItem>(query, new { Ids = queryIds });
+
+        return _mapper.Map<List<Domain.MerchItemAggregate.MerchItem>>(items);
+    }
+
     public async Task<Domain.MerchItemAggregate.MerchItem?> GetByIdAsync(MerchItemId id)
     {
         var query = "SELECT * FROM merch_items LIMIT(1)";

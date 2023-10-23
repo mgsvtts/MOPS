@@ -25,7 +25,7 @@ public class UpdateMerchItemCommandHandler : IRequestHandler<UpdateMerchItemComm
             .WithName(request.Name ?? item.Name)
             .WithDescription(request.Description ?? item.Description)
             .WithPrice(request.Price ?? item.Price)
-            .WithPrice(request.SelfPrice ?? item.SelfPrice)
+            .WithSelfPrice(request.SelfPrice ?? item.SelfPrice)
             .WithAmount(request.AmountLeft ?? item.AmountLeft);
 
         await _repository.UpdateAsync(item);

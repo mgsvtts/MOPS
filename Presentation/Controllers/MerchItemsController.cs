@@ -1,8 +1,10 @@
+using Application.Commands.MerchItems.CalculateMerchItem;
 using Application.Commands.MerchItems.CreateMerchItem;
 using Application.Commands.MerchItems.DeleteMerchItem;
 using Application.Commands.MerchItems.UpdateMerchItem;
 using Application.Queries.MerchItems.GetAllMerchItems;
 using Contracts.MerchItems;
+using Contracts.MerchItems.Calculate;
 using Contracts.MerchItems.Create;
 using Contracts.MerchItems.Update;
 using Domain.MerchItemAggregate.ValueObjects;
@@ -33,6 +35,16 @@ public class MerchItemsController : ControllerBase
         return _mapper.Map<IEnumerable<MerchItemDto>>(result);
     }
 
+    [HttpGet("calculate")]
+    public async Task<CalculateItemResponse> Calculate(IEnumerable<CalculateItemRequest> items, CancellationToken token = default)
+    {
+        var command = _mapper.Map<CalculateMerchItemCommand>(items);
+
+        var result = await _sender.Send(command, token);
+
+        return _mapper.Map<CalculateItemResponse>(result);
+    }
+
     [HttpPost]
     public async Task<MerchItemDto> Create([FromForm] CreateMerchItemRequest request, CancellationToken token = default)
     {
@@ -43,14 +55,6 @@ public class MerchItemsController : ControllerBase
         return _mapper.Map<MerchItemDto>(item);
     }
 
-    [HttpDelete("{itemId}")]
-    public async Task<IActionResult> Delete([FromRoute] Guid itemId, CancellationToken token)
-    {
-        await _sender.Send(new DeleteMerchItemCommand(new MerchItemId(itemId)), token);
-
-        return NoContent();
-    }
-
     [HttpPatch]
     public async Task<MerchItemDto> Update([FromForm] UpdateMerchItemRequest request, CancellationToken token)
     {
@@ -59,5 +63,13 @@ public class MerchItemsController : ControllerBase
         var result = await _sender.Send(command, token);
 
         return _mapper.Map<MerchItemDto>(result);
+    }
+
+    [HttpDelete("{itemId}")]
+    public async Task<IActionResult> Delete([FromRoute] Guid itemId, CancellationToken token)
+    {
+        await _sender.Send(new DeleteMerchItemCommand(new MerchItemId(itemId)), token);
+
+        return NoContent();
     }
 }

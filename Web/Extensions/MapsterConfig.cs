@@ -1,8 +1,10 @@
-﻿using Application.Commands.MerchItems.CreateMerchItem;
+﻿using Application.Commands.MerchItems.CalculateMerchItem;
+using Application.Commands.MerchItems.CreateMerchItem;
 using Application.Commands.MerchItems.UpdateMerchItem;
 using Application.Commands.Types.CreateType;
 using Application.Commands.Types.UpdateType;
 using Contracts.MerchItems;
+using Contracts.MerchItems.Calculate;
 using Contracts.MerchItems.Create;
 using Contracts.MerchItems.Update;
 using Contracts.Types;
@@ -88,6 +90,10 @@ public static class MapsterConfig
          .ForType()
          .MapWith(src => new CreateTypeCommand(new Name(src.Name)));
 
+        TypeAdapterConfig<IEnumerable<CalculateItemRequest>, CalculateMerchItemCommand>
+         .ForType()
+         .MapWith(src => new CalculateMerchItemCommand(src.Select(x => new CalculateMerchItemRequest(new MerchItemId(x.ItemId), x.Amount))));
+
         TypeAdapterConfig<UpdateTypeRequest, UpdateTypeCommand>
         .ForType()
         .MapWith(src => new UpdateTypeCommand(new TypeId(src.Id), new Name(src.Name)));
@@ -96,6 +102,10 @@ public static class MapsterConfig
              .ForType()
              .MapWith(src => new Domain.TypeAggregate.Type(new TypeId(Guid.NewGuid()),
                                                            src.Name));
+
+        TypeAdapterConfig<CalculateMerchItemResponse, CalculateItemResponse>
+            .ForType()
+            .MapWith(src => new CalculateItemResponse(src.TotalPrice, src.BenefitPercent.ToString("#0%")));
 
         TypeAdapterConfig<UpdateTypeCommand, Domain.TypeAggregate.Type>
           .ForType()

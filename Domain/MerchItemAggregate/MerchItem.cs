@@ -38,6 +38,11 @@ public class MerchItem : AggregateRoot<MerchItemId>
 
     public float GetBenefitPercent()
     {
+        if (Price == SelfPrice)
+        {
+            return 0;
+        }
+
         return (float)(Price.Value / SelfPrice.Value);
     }
 
