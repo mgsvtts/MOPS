@@ -9,4 +9,5 @@ public sealed class MerchItem
     public decimal price { get; set; }
     public decimal self_price { get; set; }
     public int amount { get; set; }
+    public DateTime created_at { get; set; }
 }

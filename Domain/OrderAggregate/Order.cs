@@ -6,23 +6,30 @@ namespace Domain.OrderAggregate;
 
 public class Order : AggregateRoot<OrderId>
 {
-    public MerchItemAmount Amount { get; private set; }
+    private readonly List<OrderItem> _items = new();
 
-    public MerchItemId ItemId { get; private set; }
+    public IReadOnlyList<OrderItem> Items => _items.AsReadOnly();
 
-    public MerchItemPrice Price { get; private set; }
+    public PaymentMethod PaymentMethod { get; set; }
 
-    public PaymentMethod PaymentMethod { get; private set; }
+    public DateTime CreatedAt { get; set; }
 
     public Order(OrderId id,
-                 MerchItemAmount amount,
-                 MerchItemId itemId,
-                 MerchItemPrice price,
-                 PaymentMethod paymentMethod) : base(id)
+                 IEnumerable<OrderItem> items,
+                 PaymentMethod paymentMethod,
+                 DateTime? createdAt = null) : base(id)
     {
-        Amount = amount;
-        ItemId = itemId;
-        Price = price;
+        _items = items.ToList();
+
         PaymentMethod = paymentMethod;
+        CreatedAt = createdAt ?? DateTime.Now;
+    }
+
+    public void SetOrderIdToOrderItems()
+    {
+        for (var i = 0; i < _items.Count; i++)
+        {
+            _items[i] = _items[i] with { OrderId = Id };
+        }
     }
 }

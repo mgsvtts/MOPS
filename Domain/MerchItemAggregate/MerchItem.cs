@@ -19,13 +19,16 @@ public class MerchItem : AggregateRoot<MerchItemId>
 
     public MerchItemAmount AmountLeft { get; private set; }
 
+    public DateTime CreatedAt { get; private set; }
+
     public MerchItem(MerchItemId id,
                      TypeId typeId,
                      Name? name = null,
                      Description? description = null,
                      MerchItemPrice? price = null,
                      MerchItemPrice? selfPrice = null,
-                     MerchItemAmount? amountLeft = null) : base(id)
+                     MerchItemAmount? amountLeft = null,
+                     DateTime? createdAt = null) : base(id)
     {
         Id = id;
         TypeId = typeId;
@@ -34,6 +37,7 @@ public class MerchItem : AggregateRoot<MerchItemId>
         Price = price ?? new MerchItemPrice();
         SelfPrice = selfPrice ?? new MerchItemPrice();
         AmountLeft = amountLeft ?? new MerchItemAmount();
+        CreatedAt = createdAt ?? DateTime.Now;
     }
 
     public float GetBenefitPercent()

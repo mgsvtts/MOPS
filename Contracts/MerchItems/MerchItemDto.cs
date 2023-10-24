@@ -7,4 +7,5 @@ public sealed record MerchItemDto(Guid Id,
                                   decimal Price,
                                   decimal SelfPrice,
                                   int AmountLeft,
-                                  string Benefit);
+                                  string Benefit,
+                                  DateTime CreatedAt);

@@ -29,23 +29,23 @@ public class TypeRepository : ITypeRepository
 
     public async Task AddAsync(Domain.TypeAggregate.Type type)
     {
-        var query = "INSERT INTO types (id, name)" +
-                    "VALUES (@Id, @Name)";
+        var query = @$"INSERT INTO types ({nameof(Models.Type.id)}, 
+                                          {nameof(Models.Type.name)},
+                                          {nameof(Models.Type.created_at)})
+                       VALUES (@{nameof(Models.Type.id)}, 
+                               @{nameof(Models.Type.name)},
+                               @{nameof(Models.Type.created_at)})";
 
-        var parameters = new
-        {
-            Id = type.Id.Identity.ToString(),
-            Name = type.Name.Value.ToString()
-        };
+        var dbType = _mapper.Map<Models.Type>(type);
 
         using var connection = _db.CreateConnection();
 
-        await connection.ExecuteAsync(query, parameters);
+        await connection.ExecuteAsync(query, dbType);
     }
 
     public async Task DeleteAsync(Domain.TypeAggregate.Type type)
     {
-        var query = "DELETE FROM types WHERE id = @Id";
+        var query = $"DELETE FROM types WHERE id = @{nameof(Models.Type.id)}";
 
         using var connection = _db.CreateConnection();
 
@@ -54,7 +54,7 @@ public class TypeRepository : ITypeRepository
 
     public async Task<Domain.TypeAggregate.Type> GetByIdAsync(TypeId id)
     {
-        var query = "SELECT * FROM types WHERE id = @Id";
+        var query = $"SELECT * FROM types WHERE id = @{nameof(Models.Type.id)}";
 
         using var connection = _db.CreateConnection();
 
@@ -65,15 +65,10 @@ public class TypeRepository : ITypeRepository
 
     public async Task UpdateAsync(Domain.TypeAggregate.Type type)
     {
-        var query = "UPDATE types SET name = @Name";
-
-        var parameters = new
-        {
-            Name = type.Name.Value.ToString()
-        };
+        var query = $"UPDATE types SET name = @{nameof(Models.Type.name)}";
 
         using var connection = _db.CreateConnection();
 
-        await connection.ExecuteAsync(query, parameters);
+        await connection.ExecuteAsync(query, new { Name = type.Name.Value.ToString() });
     }
 }

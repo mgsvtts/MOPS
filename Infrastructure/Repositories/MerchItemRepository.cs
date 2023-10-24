@@ -18,23 +18,28 @@ public class MerchItemRepository : IMerchItemRepository
 
     public async Task AddAsync(Domain.MerchItemAggregate.MerchItem item)
     {
-        var query = "INSERT INTO merch_items (id, type_id, name, description, price, self_price, amount)" +
-                    "VALUES (@Id, @TypeId, @Name, @Description, @Price, @SelfPrice, @Amount)";
+        var query = @$"INSERT INTO merch_items ({nameof(Models.MerchItem.id)},
+                                                {nameof(Models.MerchItem.type_id)}, 
+                                                {nameof(Models.MerchItem.name)}, 
+                                                {nameof(Models.MerchItem.description)}, 
+                                                {nameof(Models.MerchItem.price)}, 
+                                                {nameof(Models.MerchItem.self_price)}, 
+                                                {nameof(Models.MerchItem.amount)}, 
+                                                {nameof(Models.MerchItem.created_at)})
+                       VALUES (@{nameof(Models.MerchItem.id)},
+                               @{nameof(Models.MerchItem.type_id)}, 
+                               @{nameof(Models.MerchItem.name)}, 
+                               @{nameof(Models.MerchItem.description)}, 
+                               @{nameof(Models.MerchItem.price)}, 
+                               @{nameof(Models.MerchItem.self_price)}, 
+                               @{nameof(Models.MerchItem.amount)}, 
+                               @{nameof(Models.MerchItem.created_at)})";
 
-        var parameters = new
-        {
-            Id = item.Id.Identity.ToString(),
-            TypeId = item.TypeId.Identity.ToString(),
-            Name = item.Name.Value,
-            Description = item.Description?.Value,
-            Price = item.Price.Value.ToString(),
-            SelfPrice = item.SelfPrice.Value.ToString(),
-            Amount = item.AmountLeft.Value.ToString()
-        };
+        var dbItem = _mapper.Map<Models.MerchItem>(item);
 
         using var connection = _db.CreateConnection();
 
-        await connection.ExecuteAsync(query, parameters);
+        await connection.ExecuteAsync(query, dbItem);
     }
 
     public async Task<List<Domain.MerchItemAggregate.MerchItem>> GetAllAsync()
@@ -74,7 +79,7 @@ public class MerchItemRepository : IMerchItemRepository
 
     public async Task DeleteAsync(Domain.MerchItemAggregate.MerchItem item)
     {
-        var query = "DELETE FROM merch_items WHERE id = @Id";
+        var query = $"DELETE FROM merch_items WHERE id = @{nameof(Models.MerchItem.id)}";
 
         using var connection = _db.CreateConnection();
 
@@ -83,28 +88,19 @@ public class MerchItemRepository : IMerchItemRepository
 
     public async Task UpdateAsync(Domain.MerchItemAggregate.MerchItem item)
     {
-        var query = "UPDATE merch_items SET " +
-                    "type_id = @TypeId," +
-                    "name = @Name," +
-                    "description = @Description," +
-                    "price = @Price," +
-                    "self_price = @SelfPrice," +
-                    "amount = @Amount " +
-                    "WHERE id = @Id";
+        var query = @$"UPDATE merch_items SET 
+                    {nameof(Models.MerchItem.type_id)} = @{nameof(Models.MerchItem.type_id)},
+                    {nameof(Models.MerchItem.name)} = @{nameof(Models.MerchItem.name)},
+                    {nameof(Models.MerchItem.description)} = @{nameof(Models.MerchItem.description)},
+                    {nameof(Models.MerchItem.price)} = @{nameof(Models.MerchItem.price)},
+                    {nameof(Models.MerchItem.self_price)} = @{nameof(Models.MerchItem.self_price)},
+                    {nameof(Models.MerchItem.amount)} = @{nameof(Models.MerchItem.amount)} 
+                     WHERE {nameof(Models.MerchItem.id)} = @{nameof(Models.MerchItem.id)}";
 
-        var parameters = new
-        {
-            Id = item.Id.Identity.ToString(),
-            TypeId = item.TypeId.Identity.ToString(),
-            Name = item.Name.Value,
-            Description = item.Description?.Value,
-            Price = item.Price.Value.ToString(),
-            SelfPrice = item.SelfPrice.Value.ToString(),
-            Amount = item.AmountLeft.Value.ToString()
-        };
+        var dbItem = _mapper.Map<Models.MerchItem>(item);
 
         using var connection = _db.CreateConnection();
 
-        await connection.ExecuteAsync(query, parameters);
+        await connection.ExecuteAsync(query, dbItem);
     }
 }
