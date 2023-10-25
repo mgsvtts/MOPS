@@ -1,4 +1,4 @@
-﻿using Application.Commands.Orders;
+﻿using Application.Commands.Orders.Create;
 using Contracts.Orders.Create;
 using MapsterMapper;
 using MediatR;
@@ -25,11 +25,19 @@ public class OrdersController
     }
 
     [HttpPost]
-    public async Task CreateOrder(CreateOrderRequest request, CancellationToken token = default)
+    public async Task<IActionResult> CreateOrder(CreateOrderRequest request, CancellationToken token)
     {
         var command = _mapper.Map<CreateOrderCommand>(request);
 
         var result = await _sender.Send(command, token);
+
+        return new CreatedResult("orders", _mapper.Map<CreateOrderResponse>(result));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetStatistics(CancellationToken token)
+    {
+        var result = await _sender.Send(new GetOrderStatisticCommand(), token);
 
 
     }

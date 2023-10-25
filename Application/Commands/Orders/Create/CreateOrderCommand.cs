@@ -7,6 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Commands.Orders;
+namespace Application.Commands.Orders.Create;
 public sealed record CreateOrderCommand(IEnumerable<OrderItem> Items,
-                                        PaymentMethod PaymentMethod) :IRequest<Order>;
+                                        PaymentMethod PaymentMethod) : IRequest<Order>;

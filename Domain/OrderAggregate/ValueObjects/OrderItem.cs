@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Domain.OrderAggregate.ValueObjects;
-public sealed record OrderItem(OrderId OrderId,
-                               MerchItemId ItemId,
+public sealed record OrderItem(MerchItemId ItemId,
                                MerchItemAmount Amount,
                                MerchItemPrice Price);

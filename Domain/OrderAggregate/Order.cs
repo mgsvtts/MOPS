@@ -1,4 +1,5 @@
 using Domain.Common;
+using Domain.MerchItemAggregate;
 using Domain.MerchItemAggregate.ValueObjects;
 using Domain.OrderAggregate.ValueObjects;
 
@@ -15,21 +16,39 @@ public class Order : AggregateRoot<OrderId>
     public DateTime CreatedAt { get; set; }
 
     public Order(OrderId id,
-                 IEnumerable<OrderItem> items,
+                 IEnumerable<OrderItem>? items,
                  PaymentMethod paymentMethod,
                  DateTime? createdAt = null) : base(id)
     {
-        _items = items.ToList();
+        if(items is not null)
+        {
+            _items = items.ToList();
+        }
 
         PaymentMethod = paymentMethod;
         CreatedAt = createdAt ?? DateTime.Now;
     }
 
-    public void SetOrderIdToOrderItems()
+    public Order AddOrderItems(IEnumerable<OrderItem> items)
+    {
+        if (items is null)
+        {
+            throw new ArgumentNullException(nameof(items), "Order items cannot be null");
+        }
+
+        _items.AddRange(items);
+
+        return this;
+    }
+
+    public Order SetActualPriceToItems(IEnumerable<MerchItem> actualItems)
     {
         for (var i = 0; i < _items.Count; i++)
         {
-            _items[i] = _items[i] with { OrderId = Id };
+            var actualItem = actualItems.First(x => x.Id == _items[i].ItemId);
+            _items[i] = _items[i] with { Price = actualItem.Price };
         }
+
+        return this;
     }
 }

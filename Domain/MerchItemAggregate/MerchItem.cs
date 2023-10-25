@@ -40,6 +40,18 @@ public class MerchItem : AggregateRoot<MerchItemId>
         CreatedAt = createdAt ?? DateTime.Now;
     }
 
+    public MerchItem SubtractAmount(MerchItemAmount amount)
+    {
+        if(amount.Value > AmountLeft.Value)
+        {
+            throw new InvalidOperationException("You cannot subtract more than original sum");
+        }
+
+        AmountLeft = new MerchItemAmount(AmountLeft.Value - amount.Value);
+
+        return this;
+    }
+
     public float GetBenefitPercent()
     {
         if (Price == SelfPrice)

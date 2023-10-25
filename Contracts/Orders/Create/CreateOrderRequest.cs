@@ -6,5 +6,5 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Contracts.Orders.Create;
-public sealed record CreateOrderRequest(IEnumerable<OrderItem> Items,
+public sealed record CreateOrderRequest(IEnumerable<OrderItemRequest> Items,
                                         PaymentMethod PaymentMethod);

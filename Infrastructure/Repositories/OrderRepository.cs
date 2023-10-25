@@ -41,11 +41,12 @@ public class OrderRepository : IOrderRepository
                                         @{nameof(OrderItem.price)})";
 
         var dbOrder = _mapper.Map<Order>(order);
-        var dbOrderItem = _mapper.Map<IEnumerable<OrderItem>>(order.Items);
+        var dbOrderItems = _mapper.Map<List<OrderItem>>(order.Items);
+        dbOrderItems.ForEach(x => x.order_id = dbOrder.id);
 
         using var connection = _db.CreateConnection();
 
         await connection.ExecuteAsync(orderQuery, dbOrder);
-        await connection.ExecuteAsync(orderItemQuery, dbOrderItem);
+        await connection.ExecuteAsync(orderItemQuery, dbOrderItems);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Application.Commands.MerchItems.CalculateMerchItem;
 using Application.Commands.MerchItems.CreateMerchItem;
 using Application.Commands.MerchItems.UpdateMerchItem;
-using Application.Commands.Orders;
+using Application.Commands.Orders.Create;
 using Application.Commands.Types.CreateType;
 using Application.Commands.Types.UpdateType;
 using Contracts.MerchItems;
@@ -154,7 +154,6 @@ public static class MapsterConfig
          .MapWith(src => new Infrastructure.Models.OrderItem
          {
              id = Guid.NewGuid().ToString(),
-             order_id = src.OrderId.Identity.ToString(),
              merch_item_id = src.ItemId.Identity.ToString(),
              amount = src.Amount.Value,
              price = src.Price.Value
@@ -163,12 +162,16 @@ public static class MapsterConfig
         TypeAdapterConfig<CreateOrderCommand, Domain.OrderAggregate.Order>
         .ForType()
         .MapWith(src => new Domain.OrderAggregate.Order(new OrderId(Guid.NewGuid()),
-                                                        src.Items.Select(x => new Domain.OrderAggregate.ValueObjects.OrderItem(x.OrderId,
-                                                                                                                               x.ItemId,
-                                                                                                                               x.Amount,
-                                                                                                                               x.Price)),
+                                                        null,
                                                         src.PaymentMethod,
                                                         DateTime.Now));
+
+
+        TypeAdapterConfig<Domain.OrderAggregate.Order, CreateOrderResponse>
+       .ForType()
+       .MapWith(src => new CreateOrderResponse(src.Id.Identity, 
+                                               src.Items.Select(x => new OrderItemResponse(x.ItemId.Identity, x.Amount.Value, x.Price.Value)),
+                                               src.PaymentMethod));
 
         TypeAdapterConfig<Domain.OrderAggregate.Order, Order>
         .ForType()
@@ -181,10 +184,9 @@ public static class MapsterConfig
 
         TypeAdapterConfig<CreateOrderRequest, CreateOrderCommand >
         .ForType()
-        .MapWith(src => new CreateOrderCommand(src.Items.Select(x=>new Domain.OrderAggregate.ValueObjects.OrderItem(null, 
-                                                                                                                    new MerchItemId(x.MerchItemId),
+        .MapWith(src => new CreateOrderCommand(src.Items.Select(x=>new Domain.OrderAggregate.ValueObjects.OrderItem(new MerchItemId(x.MerchItemId),
                                                                                                                     new MerchItemAmount(x.Amount),
-                                                                                                                    new MerchItemPrice(x.Price))),
+                                                                                                                    null)),
                                                src.PaymentMethod));
 
         TypeAdapterConfig.GlobalSettings.Scan(Assembly.GetExecutingAssembly());
