@@ -1,16 +1,11 @@
-﻿using Domain.MerchItemAggregate;
-using Domain.MerchItemAggregate.Repositories;
+﻿using Domain.MerchItemAggregate.Repositories;
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Repositories;
 using MapsterMapper;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Commands.Orders.Create;
+
 internal sealed class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Order>
 {
     private readonly IMapper _mapper;
@@ -48,6 +43,4 @@ internal sealed class CreateOrderCommandHandler : IRequestHandler<CreateOrderCom
 
         return order;
     }
-
-
 }

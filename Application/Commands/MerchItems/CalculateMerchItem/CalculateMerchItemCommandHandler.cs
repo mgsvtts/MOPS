@@ -1,14 +1,9 @@
 ﻿using Domain.MerchItemAggregate;
 using Domain.MerchItemAggregate.Repositories;
-using MapsterMapper;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Commands.MerchItems.CalculateMerchItem;
+
 public class CalculateMerchItemCommandHandler : IRequestHandler<CalculateMerchItemCommand, CalculateMerchItemResponse>
 {
     private readonly IMerchItemRepository _repository;
@@ -24,22 +19,20 @@ public class CalculateMerchItemCommandHandler : IRequestHandler<CalculateMerchIt
 
         var itemsWithAmount = BindItemsWithAmount(request, items);
 
-        var (Sum, Benefit) = CalculateSumAndBenefit(itemsWithAmount);
+        var sum = CalculateSum(itemsWithAmount);
 
-        return new CalculateMerchItemResponse(Sum, Benefit);
+        return new CalculateMerchItemResponse(sum);
     }
 
-    private static (decimal Sum, float Benefit) CalculateSumAndBenefit(Dictionary<MerchItem, int> itemsWithAmount)
+    private static decimal CalculateSum(Dictionary<MerchItem, int> itemsWithAmount)
     {
         decimal sum = 0;
-        float benefit = 0;
         foreach (var item in itemsWithAmount)
         {
             sum += item.Key.Price.Value * item.Value;
-            benefit += item.Key.GetBenefitPercent();
         }
 
-        return (sum, benefit);
+        return sum;
     }
 
     private static Dictionary<MerchItem, int> BindItemsWithAmount(CalculateMerchItemCommand request, List<MerchItem> items)

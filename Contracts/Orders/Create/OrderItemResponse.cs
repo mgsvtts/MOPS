@@ -1,8 +1,2 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Contracts.Orders.Create;
-public sealed record OrderItemResponse(Guid ItemId, int Amount, decimal Price);
+﻿namespace Contracts.Orders.Create;
+public record struct OrderItemResponse(Guid ItemId, int Amount, decimal Price);

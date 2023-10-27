@@ -1,8 +1,2 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.Commands.MerchItems.CalculateMerchItem;
-public sealed record CalculateMerchItemResponse(decimal TotalPrice, float BenefitPercent);
+﻿namespace Application.Commands.MerchItems.CalculateMerchItem;
+public record struct CalculateMerchItemResponse(decimal TotalPrice);

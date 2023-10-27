@@ -55,7 +55,6 @@ public class MerchItemsController : ControllerBase
         return _mapper.Map<CalculateItemResponse>(result);
     }
 
-
     [HttpPatch]
     public async Task<MerchItemDto> Update([FromForm] UpdateMerchItemRequest request, CancellationToken token)
     {

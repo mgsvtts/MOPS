@@ -1,9 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Contracts.MerchItems.Calculate;
+﻿namespace Contracts.MerchItems.Calculate;
 public sealed record CalculateItemRequest(Guid ItemId,
                                           int Amount);

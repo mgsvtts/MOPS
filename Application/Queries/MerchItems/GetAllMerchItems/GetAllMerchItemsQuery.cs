@@ -2,4 +2,4 @@
 using MediatR;
 
 namespace Application.Queries.MerchItems.GetAllMerchItems;
-public sealed record GetAllMerchItemsQuery : IRequest<List<MerchItem>>;
+public record struct GetAllMerchItemsQuery : IRequest<List<MerchItem>>;

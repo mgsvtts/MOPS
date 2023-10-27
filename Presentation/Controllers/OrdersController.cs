@@ -1,13 +1,9 @@
 ﻿using Application.Commands.Orders.Create;
+using Application.Queries.Orders.Statistics;
 using Contracts.Orders.Create;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Presentation.Controllers;
 
@@ -34,11 +30,9 @@ public class OrdersController
         return new CreatedResult("orders", _mapper.Map<CreateOrderResponse>(result));
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetStatistics(CancellationToken token)
+    [HttpGet("statistic")]
+    public async Task<GetOrderStatisticQueryResponse> GetStatistic(CancellationToken token)
     {
-        var result = await _sender.Send(new GetOrderStatisticCommand(), token);
-
-
+        return await _sender.Send(new GetOrderStatisticQuery(), token);
     }
 }

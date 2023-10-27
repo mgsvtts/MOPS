@@ -1,6 +1,6 @@
 ﻿namespace Contracts.MerchItems;
 
-public sealed record MerchItemDto(Guid Id,
+public record struct MerchItemDto(Guid Id,
                                   Guid TypeId,
                                   string Name,
                                   string? Description,

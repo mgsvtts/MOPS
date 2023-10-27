@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Domain.MerchItemAggregate.Repositories;
 using Domain.MerchItemAggregate.ValueObjects;
+using Infrastructure.Models;
 using MapsterMapper;
 
 namespace Infrastructure.Repositories;
@@ -18,24 +19,24 @@ public class MerchItemRepository : IMerchItemRepository
 
     public async Task AddAsync(Domain.MerchItemAggregate.MerchItem item)
     {
-        var query = @$"INSERT INTO merch_items ({nameof(Models.MerchItem.id)},
-                                                {nameof(Models.MerchItem.type_id)}, 
-                                                {nameof(Models.MerchItem.name)}, 
-                                                {nameof(Models.MerchItem.description)}, 
-                                                {nameof(Models.MerchItem.price)}, 
-                                                {nameof(Models.MerchItem.self_price)}, 
-                                                {nameof(Models.MerchItem.amount)}, 
-                                                {nameof(Models.MerchItem.created_at)})
-                       VALUES (@{nameof(Models.MerchItem.id)},
-                               @{nameof(Models.MerchItem.type_id)}, 
-                               @{nameof(Models.MerchItem.name)}, 
-                               @{nameof(Models.MerchItem.description)}, 
-                               @{nameof(Models.MerchItem.price)}, 
-                               @{nameof(Models.MerchItem.self_price)}, 
-                               @{nameof(Models.MerchItem.amount)}, 
-                               @{nameof(Models.MerchItem.created_at)})";
+        var query = @$"INSERT INTO {nameof(merch_items)} ({nameof(merch_items.id)},
+                                                          {nameof(merch_items.type_id)},
+                                                          {nameof(merch_items.name)},
+                                                          {nameof(merch_items.description)},
+                                                          {nameof(merch_items.price)},
+                                                          {nameof(merch_items.self_price)},
+                                                          {nameof(merch_items.amount)},
+                                                          {nameof(merch_items.created_at)})
+                       VALUES (@{nameof(merch_items.id)},
+                               @{nameof(merch_items.type_id)},
+                               @{nameof(merch_items.name)},
+                               @{nameof(merch_items.description)},
+                               @{nameof(merch_items.price)},
+                               @{nameof(merch_items.self_price)},
+                               @{nameof(merch_items.amount)},
+                               @{nameof(merch_items.created_at)})";
 
-        var dbItem = _mapper.Map<Models.MerchItem>(item);
+        var dbItem = _mapper.Map<merch_items>(item);
 
         using var connection = _db.CreateConnection();
 
@@ -44,42 +45,42 @@ public class MerchItemRepository : IMerchItemRepository
 
     public async Task<List<Domain.MerchItemAggregate.MerchItem>> GetAllAsync()
     {
-        var query = "SELECT * FROM merch_items";
+        var query = $"SELECT * FROM {nameof(merch_items)}";
 
         using var connection = _db.CreateConnection();
 
-        var items = await connection.QueryAsync<Models.MerchItem>(query);
+        var items = await connection.QueryAsync<merch_items>(query);
 
         return _mapper.Map<List<Domain.MerchItemAggregate.MerchItem>>(items);
     }
 
     public async Task<List<Domain.MerchItemAggregate.MerchItem>> GetAllByIdsAsync(IEnumerable<MerchItemId> ids)
     {
-        var query = "SELECT * FROM merch_items WHERE id IN @Ids";
+        var query = $"SELECT * FROM {nameof(merch_items)} WHERE {nameof(merch_items.id)} IN @Ids";
 
         var queryIds = ids.Select(x => x.Identity.ToString()).ToArray();
 
         using var connection = _db.CreateConnection();
 
-        var items = await connection.QueryAsync<Models.MerchItem>(query, new { Ids = queryIds });
+        var items = await connection.QueryAsync<merch_items>(query, new { Ids = queryIds });
 
         return _mapper.Map<List<Domain.MerchItemAggregate.MerchItem>>(items);
     }
 
     public async Task<Domain.MerchItemAggregate.MerchItem?> GetByIdAsync(MerchItemId id)
     {
-        var query = "SELECT * FROM merch_items LIMIT(1)";
+        var query = $"SELECT * FROM {nameof(merch_items)} LIMIT(1)";
 
         using var connection = _db.CreateConnection();
 
-        var item = await connection.QueryFirstOrDefaultAsync<Models.MerchItem>(query);
+        var item = await connection.QueryFirstOrDefaultAsync<merch_items>(query);
 
         return _mapper.Map<Domain.MerchItemAggregate.MerchItem>(item);
     }
 
     public async Task DeleteAsync(Domain.MerchItemAggregate.MerchItem item)
     {
-        var query = $"DELETE FROM merch_items WHERE id = @{nameof(Models.MerchItem.id)}";
+        var query = $"DELETE FROM {nameof(merch_items)} WHERE {nameof(merch_items.id)} = @{nameof(merch_items.id)}";
 
         using var connection = _db.CreateConnection();
 
@@ -88,16 +89,16 @@ public class MerchItemRepository : IMerchItemRepository
 
     public async Task UpdateAsync(Domain.MerchItemAggregate.MerchItem item)
     {
-        var query = @$"UPDATE merch_items SET 
-                    {nameof(Models.MerchItem.type_id)} = @{nameof(Models.MerchItem.type_id)},
-                    {nameof(Models.MerchItem.name)} = @{nameof(Models.MerchItem.name)},
-                    {nameof(Models.MerchItem.description)} = @{nameof(Models.MerchItem.description)},
-                    {nameof(Models.MerchItem.price)} = @{nameof(Models.MerchItem.price)},
-                    {nameof(Models.MerchItem.self_price)} = @{nameof(Models.MerchItem.self_price)},
-                    {nameof(Models.MerchItem.amount)} = @{nameof(Models.MerchItem.amount)} 
-                     WHERE {nameof(Models.MerchItem.id)} = @{nameof(Models.MerchItem.id)}";
+        var query = @$"UPDATE {nameof(merch_items)} SET
+                    {nameof(merch_items.type_id)} = @{nameof(merch_items.type_id)},
+                    {nameof(merch_items.name)} = @{nameof(merch_items.name)},
+                    {nameof(merch_items.description)} = @{nameof(merch_items.description)},
+                    {nameof(merch_items.price)} = @{nameof(merch_items.price)},
+                    {nameof(merch_items.self_price)} = @{nameof(merch_items.self_price)},
+                    {nameof(merch_items.amount)} = @{nameof(merch_items.amount)}
+                     WHERE {nameof(merch_items.id)} = @{nameof(merch_items.id)}";
 
-        var dbItem = _mapper.Map<Models.MerchItem>(item);
+        var dbItem = _mapper.Map<merch_items>(item);
 
         using var connection = _db.CreateConnection();
 

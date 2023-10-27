@@ -1,3 +1,3 @@
 namespace Contracts.Types;
 
-public sealed record TypeDto(Guid Id, string Name, DateTime CreatedAt);
+public record struct TypeDto(Guid Id, string Name, DateTime CreatedAt);

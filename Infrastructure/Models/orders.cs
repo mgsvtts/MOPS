@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Models;
 
-public class Order
+public struct orders
 {
     public string id { get; set; }
 

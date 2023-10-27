@@ -12,7 +12,7 @@ public class DbContext
     public DbContext(IConfiguration configuration)
     {
         _config = configuration;
-        _connectionString = _config.GetConnectionString("DefaultConnection");
+        _connectionString = _config.GetConnectionString("DefaultConnection")!;
     }
 
     public IDbConnection CreateConnection()

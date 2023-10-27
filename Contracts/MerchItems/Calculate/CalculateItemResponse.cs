@@ -1,8 +1,2 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Contracts.MerchItems.Calculate;
-public sealed record CalculateItemResponse(decimal TotalPrice, string Benefit);
+﻿namespace Contracts.MerchItems.Calculate;
+public record struct CalculateItemResponse(decimal TotalPrice);

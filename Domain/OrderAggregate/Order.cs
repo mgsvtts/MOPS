@@ -1,6 +1,5 @@
 using Domain.Common;
 using Domain.MerchItemAggregate;
-using Domain.MerchItemAggregate.ValueObjects;
 using Domain.OrderAggregate.ValueObjects;
 
 namespace Domain.OrderAggregate;
@@ -20,7 +19,7 @@ public class Order : AggregateRoot<OrderId>
                  PaymentMethod paymentMethod,
                  DateTime? createdAt = null) : base(id)
     {
-        if(items is not null)
+        if (items is not null)
         {
             _items = items.ToList();
         }

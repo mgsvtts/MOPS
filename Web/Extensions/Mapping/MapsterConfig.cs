@@ -4,11 +4,11 @@ using Application.Commands.MerchItems.UpdateMerchItem;
 using Application.Commands.Orders.Create;
 using Application.Commands.Types.CreateType;
 using Application.Commands.Types.UpdateType;
+using Application.Queries.Orders.Statistics;
 using Contracts.MerchItems;
 using Contracts.MerchItems.Calculate;
 using Contracts.MerchItems.Create;
 using Contracts.MerchItems.Update;
-using Contracts.Orders;
 using Contracts.Orders.Create;
 using Contracts.Types;
 using Contracts.Types.Create;
@@ -17,13 +17,13 @@ using Domain.Common.ValueObjects;
 using Domain.MerchItemAggregate.ValueObjects;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.TypeAggregate.ValueObjects;
-using Infrastructure.Misc.Order;
 using Infrastructure.Models;
 using Mapster;
 using MapsterMapper;
 using System.Reflection;
+using Web.Extensions.Mapping.CustomMappers;
 
-namespace Web.Extensions;
+namespace Web.Extensions.Mapping;
 
 public static class MapsterConfig
 {
@@ -31,19 +31,11 @@ public static class MapsterConfig
     {
         TypeAdapterConfig<Domain.MerchItemAggregate.MerchItem, MerchItemDto>
            .ForType()
-           .MapWith(src => new MerchItemDto(src.Id.Identity,
-                                            src.TypeId.Identity,
-                                            src.Name.Value,
-                                            src.Description.Value,
-                                            src.Price.Value,
-                                            src.SelfPrice.Value,
-                                            src.AmountLeft.Value,
-                                            src.GetBenefitPercent().ToString("#0%"),
-                                            src.CreatedAt));
+           .MapWith(src => MerchItemDtoCustomMapper.Map(src));
 
-        TypeAdapterConfig<Domain.MerchItemAggregate.MerchItem, Infrastructure.Models.MerchItem>
+        TypeAdapterConfig<Domain.MerchItemAggregate.MerchItem, merch_items>
            .ForType()
-           .MapWith(src => new Infrastructure.Models.MerchItem
+           .MapWith(src => new merch_items
            {
                id = src.Id.Identity.ToString(),
                type_id = src.TypeId.Identity.ToString(),
@@ -55,7 +47,7 @@ public static class MapsterConfig
                created_at = src.CreatedAt
            });
 
-        TypeAdapterConfig<Infrastructure.Models.MerchItem, Domain.MerchItemAggregate.MerchItem>
+        TypeAdapterConfig<merch_items, Domain.MerchItemAggregate.MerchItem>
            .ForType()
            .MapWith(src => new Domain.MerchItemAggregate.MerchItem(new MerchItemId(Guid.Parse(src.id)),
                                                                    new TypeId(Guid.Parse(src.type_id)),
@@ -116,7 +108,7 @@ public static class MapsterConfig
 
         TypeAdapterConfig<CalculateMerchItemResponse, CalculateItemResponse>
             .ForType()
-            .MapWith(src => new CalculateItemResponse(src.TotalPrice, src.BenefitPercent.ToString("#0%")));
+            .MapWith(src => new CalculateItemResponse(src.TotalPrice));
 
         TypeAdapterConfig<UpdateTypeCommand, Domain.TypeAggregate.Type>
           .ForType()
@@ -124,20 +116,20 @@ public static class MapsterConfig
                                                         src.Name,
                                                         DateTime.Now));
 
-        TypeAdapterConfig<Domain.TypeAggregate.Type, Infrastructure.Models.Type>
+        TypeAdapterConfig<Domain.TypeAggregate.Type, types>
           .ForType()
           .Map(dest => dest.id, src => src.Id.Identity.ToString())
           .Map(dest => dest.name, src => src.Name.Value);
 
-        TypeAdapterConfig<Infrastructure.Models.Type, Domain.TypeAggregate.Type>
+        TypeAdapterConfig<types, Domain.TypeAggregate.Type>
           .ForType()
           .MapWith(src => new Domain.TypeAggregate.Type(new TypeId(Guid.Parse(src.id)),
                                                         new Name(src.name),
                                                         src.created_at));
 
-        TypeAdapterConfig<Domain.TypeAggregate.Type, Infrastructure.Models.Type>
+        TypeAdapterConfig<Domain.TypeAggregate.Type, types>
           .ForType()
-          .MapWith(src => new Infrastructure.Models.Type
+          .MapWith(src => new types
           {
               id = src.Id.Identity.ToString(),
               name = src.Name.Value
@@ -146,12 +138,12 @@ public static class MapsterConfig
         TypeAdapterConfig<Domain.TypeAggregate.Type, TypeDto>
          .ForType()
          .MapWith(src => new TypeDto(src.Id.Identity,
-                                     src.Name.Value, 
+                                     src.Name.Value,
                                      src.CreatedAt));
 
-        TypeAdapterConfig<Domain.OrderAggregate.ValueObjects.OrderItem, Infrastructure.Models.OrderItem>
+        TypeAdapterConfig<OrderItem, order_items>
          .ForType()
-         .MapWith(src => new Infrastructure.Models.OrderItem
+         .MapWith(src => new order_items
          {
              id = Guid.NewGuid().ToString(),
              merch_item_id = src.ItemId.Identity.ToString(),
@@ -166,28 +158,35 @@ public static class MapsterConfig
                                                         src.PaymentMethod,
                                                         DateTime.Now));
 
-
         TypeAdapterConfig<Domain.OrderAggregate.Order, CreateOrderResponse>
        .ForType()
-       .MapWith(src => new CreateOrderResponse(src.Id.Identity, 
+       .MapWith(src => new CreateOrderResponse(src.Id.Identity,
                                                src.Items.Select(x => new OrderItemResponse(x.ItemId.Identity, x.Amount.Value, x.Price.Value)),
                                                src.PaymentMethod));
 
-        TypeAdapterConfig<Domain.OrderAggregate.Order, Order>
+        TypeAdapterConfig<Domain.OrderAggregate.Order, orders>
         .ForType()
-        .MapWith(src => new Order
+        .MapWith(src => new orders
         {
-            id=src.Id.Identity.ToString(),
+            id = src.Id.Identity.ToString(),
             created_at = src.CreatedAt,
             payment_method = (Infrastructure.Misc.Order.PaymentMethod)(int)src.PaymentMethod
         });
 
-        TypeAdapterConfig<CreateOrderRequest, CreateOrderCommand >
+        TypeAdapterConfig<CreateOrderRequest, CreateOrderCommand>
         .ForType()
-        .MapWith(src => new CreateOrderCommand(src.Items.Select(x=>new Domain.OrderAggregate.ValueObjects.OrderItem(new MerchItemId(x.MerchItemId),
+        .MapWith(src => new CreateOrderCommand(src.Items.Select(x => new OrderItem(new MerchItemId(x.MerchItemId),
                                                                                                                     new MerchItemAmount(x.Amount),
                                                                                                                     null)),
                                                src.PaymentMethod));
+
+        TypeAdapterConfig<Application.Queries.Orders.Statistics.Dto.MerchItemStatistic, MerchItemStatistic>
+          .ForType()
+          .MapWith(src => new MerchItemStatistic(src.name,
+                                                 src.orders_with_item,
+                                                 src.total_self_price,
+                                                 src.total_price,
+                                                 src.total_amount));
 
         TypeAdapterConfig.GlobalSettings.Scan(Assembly.GetExecutingAssembly());
 

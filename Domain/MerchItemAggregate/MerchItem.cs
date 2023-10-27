@@ -42,7 +42,7 @@ public class MerchItem : AggregateRoot<MerchItemId>
 
     public MerchItem SubtractAmount(MerchItemAmount amount)
     {
-        if(amount.Value > AmountLeft.Value)
+        if (amount.Value > AmountLeft.Value)
         {
             throw new InvalidOperationException("You cannot subtract more than original sum");
         }

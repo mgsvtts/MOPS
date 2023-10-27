@@ -1,6 +1,6 @@
 ﻿namespace Infrastructure.Models;
 
-public sealed class Type
+public struct types
 {
     public string id { get; set; }
 

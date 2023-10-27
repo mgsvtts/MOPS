@@ -1,6 +1,7 @@
 using Infrastructure;
 using Presentation.Controllers;
 using Web.Extensions;
+using Web.Extensions.Mapping;
 
 namespace Web;
 

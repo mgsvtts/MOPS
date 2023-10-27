@@ -1,2 +1,2 @@
 ﻿namespace Contracts.MerchItems.GetAllMerchItems;
-public sealed record GetAllMerchItemsResponse(IEnumerable<MerchItemDto> Items);
+public record struct GetAllMerchItemsResponse(IEnumerable<MerchItemDto> Items);

@@ -2,13 +2,9 @@
 using Domain.OrderAggregate.Repositories;
 using Infrastructure.Models;
 using MapsterMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories;
+
 public class OrderRepository : IOrderRepository
 {
     private readonly DbContext _db;
@@ -22,26 +18,26 @@ public class OrderRepository : IOrderRepository
 
     public async Task AddAsync(Domain.OrderAggregate.Order order)
     {
-        var orderQuery =  $@"INSERT INTO orders ({nameof(Order.id)},
-                                                 {nameof(Order.created_at)},
-                                                 {nameof(Order.payment_method)})
-                             VALUES (@{nameof(Order.id)},
-                                     @{nameof(Order.created_at)},
-                                     @{nameof(Order.payment_method)})";
+        var orderQuery = $@"INSERT INTO {nameof(orders)} ({nameof(orders.id)},
+                                                 {nameof(orders.created_at)},
+                                                 {nameof(orders.payment_method)})
+                             VALUES (@{nameof(orders.id)},
+                                     @{nameof(orders.created_at)},
+                                     @{nameof(orders.payment_method)})";
 
-        var orderItemQuery = $@"INSERT INTO order_items ({nameof(OrderItem.id)}, 
-                                                         {nameof(OrderItem.order_id)},
-                                                         {nameof(OrderItem.merch_item_id)},
-                                                         {nameof(OrderItem.amount)}, 
-                                                         {nameof(OrderItem.price)})
-                                VALUES (@{nameof(OrderItem.id)}, 
-                                        @{nameof(OrderItem.order_id)},
-                                        @{nameof(OrderItem.merch_item_id)},
-                                        @{nameof(OrderItem.amount)}, 
-                                        @{nameof(OrderItem.price)})";
+        var orderItemQuery = $@"INSERT INTO {nameof(order_items)} ({nameof(order_items.id)},
+                                                         {nameof(order_items.order_id)},
+                                                         {nameof(order_items.merch_item_id)},
+                                                         {nameof(order_items.amount)},
+                                                         {nameof(order_items.price)})
+                                VALUES (@{nameof(order_items.id)},
+                                        @{nameof(order_items.order_id)},
+                                        @{nameof(order_items.merch_item_id)},
+                                        @{nameof(order_items.amount)},
+                                        @{nameof(order_items.price)})";
 
-        var dbOrder = _mapper.Map<Order>(order);
-        var dbOrderItems = _mapper.Map<List<OrderItem>>(order.Items);
+        var dbOrder = _mapper.Map<orders>(order);
+        var dbOrderItems = _mapper.Map<List<order_items>>(order.Items);
         dbOrderItems.ForEach(x => x.order_id = dbOrder.id);
 
         using var connection = _db.CreateConnection();

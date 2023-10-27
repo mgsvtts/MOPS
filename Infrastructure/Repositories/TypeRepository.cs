@@ -1,6 +1,8 @@
 using Dapper;
+using Domain.Common.ValueObjects;
 using Domain.TypeAggregate.Repositories;
 using Domain.TypeAggregate.ValueObjects;
+using Infrastructure.Models;
 using MapsterMapper;
 
 namespace Infrastructure.Repositories;
@@ -18,25 +20,25 @@ public class TypeRepository : ITypeRepository
 
     public async Task<List<Domain.TypeAggregate.Type>> GetAllAsync()
     {
-        var query = "SELECT * FROM types";
+        var query = $"SELECT * FROM {nameof(types)}";
 
         using var connection = _db.CreateConnection();
 
-        var items = await connection.QueryAsync<Models.Type>(query);
+        var items = await connection.QueryAsync<types>(query);
 
         return _mapper.Map<List<Domain.TypeAggregate.Type>>(items);
     }
 
     public async Task AddAsync(Domain.TypeAggregate.Type type)
     {
-        var query = @$"INSERT INTO types ({nameof(Models.Type.id)}, 
-                                          {nameof(Models.Type.name)},
-                                          {nameof(Models.Type.created_at)})
-                       VALUES (@{nameof(Models.Type.id)}, 
-                               @{nameof(Models.Type.name)},
-                               @{nameof(Models.Type.created_at)})";
+        var query = @$"INSERT INTO {nameof(types)} ({nameof(types.id)},
+                                          {nameof(types.name)},
+                                          {nameof(types.created_at)})
+                       VALUES (@{nameof(types.id)},
+                               @{nameof(types.name)},
+                               @{nameof(types.created_at)})";
 
-        var dbType = _mapper.Map<Models.Type>(type);
+        var dbType = _mapper.Map<types>(type);
 
         using var connection = _db.CreateConnection();
 
@@ -45,7 +47,7 @@ public class TypeRepository : ITypeRepository
 
     public async Task DeleteAsync(Domain.TypeAggregate.Type type)
     {
-        var query = $"DELETE FROM types WHERE id = @{nameof(Models.Type.id)}";
+        var query = $"DELETE FROM {nameof(types)} WHERE id = @{nameof(types.id)}";
 
         using var connection = _db.CreateConnection();
 
@@ -54,18 +56,18 @@ public class TypeRepository : ITypeRepository
 
     public async Task<Domain.TypeAggregate.Type> GetByIdAsync(TypeId id)
     {
-        var query = $"SELECT * FROM types WHERE id = @{nameof(Models.Type.id)}";
+        var query = $"SELECT * FROM {nameof(types)} WHERE id = @{nameof(types.id)}";
 
         using var connection = _db.CreateConnection();
 
-        var type = await connection.QueryFirstOrDefaultAsync<Models.Type>(query, new { Id = id.Identity.ToString() });
+        var type = await connection.QueryFirstOrDefaultAsync<types>(query, new { Id = id.Identity.ToString() });
 
         return _mapper.Map<Domain.TypeAggregate.Type>(type);
     }
 
     public async Task UpdateAsync(Domain.TypeAggregate.Type type)
     {
-        var query = $"UPDATE types SET name = @{nameof(Models.Type.name)}";
+        var query = $"UPDATE {nameof(types)} SET {nameof(types.name)} = @{nameof(types.name)}";
 
         using var connection = _db.CreateConnection();
 
