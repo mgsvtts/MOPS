@@ -7,7 +7,13 @@ public class MerchItemDtoCustomMapper
     public static MerchItemDto Map(Domain.MerchItemAggregate.MerchItem src)
     {
         var benefit = src.GetBenefitPercent();
-        var percent = benefit > 1 ? $"+{benefit - 1:#0%}" : $"-{1 - benefit:#0%}";
+
+        var percent = benefit switch
+        {
+            0 => "+0%",
+            > 1 => $"+{benefit - 1:#0%}",
+            _ => $"-{1 - benefit:#0%}",
+        };
 
         return new MerchItemDto(src.Id.Identity,
                                 src.TypeId.Identity,
