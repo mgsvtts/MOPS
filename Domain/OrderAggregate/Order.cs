@@ -45,7 +45,11 @@ public class Order : AggregateRoot<OrderId>
         for (var i = 0; i < _items.Count; i++)
         {
             var actualItem = actualItems.First(x => x.Id == _items[i].ItemId);
-            _items[i] = _items[i] with { Price = actualItem.Price };
+            _items[i] = _items[i] with
+            {
+                Price = actualItem.Price,
+                SelfPrice = actualItem.SelfPrice
+            };
         }
 
         return this;

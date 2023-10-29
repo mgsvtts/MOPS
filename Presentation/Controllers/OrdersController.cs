@@ -38,8 +38,8 @@ public class OrdersController
     }
 
     [HttpGet]
-    public async Task GetAll(CancellationToken token)
+    public async Task<object> GetAll(CancellationToken token)
     {
-        await _sender.Send(new GetAllOrdersQuery(), token);
+        return await _sender.Send(new GetAllOrdersQuery(), token);
     }
 }

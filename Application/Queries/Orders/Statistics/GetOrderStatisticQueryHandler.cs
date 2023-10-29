@@ -1,13 +1,9 @@
 ﻿using Application.Queries.Orders.Statistics.Dto.Absolutes;
 using Dapper;
-using Domain.Common.ValueObjects;
-using Domain.MerchItemAggregate.ValueObjects;
 using Infrastructure;
 using Infrastructure.Models;
 using MapsterMapper;
 using MediatR;
-using System.Diagnostics;
-using System.Xml.Linq;
 
 namespace Application.Queries.Orders.Statistics;
 
@@ -46,10 +42,7 @@ public sealed class GetOrderStatisticQueryHandler : IRequestHandler<GetOrderStat
                                FROM {nameof(order_items)};
 
                                SELECT SUM({nameof(order_items.amount)}) as absolute_amount_sold
-                               FROM {nameof(order_items)};
-
-                               SELECT SUM({nameof(merch_items.amount)}) as absolute_amount_left
-                               FROM {nameof(merch_items)};";
+                               FROM {nameof(order_items)};";
 
         using var connection = _db.CreateConnection();
 
@@ -59,11 +52,9 @@ public sealed class GetOrderStatisticQueryHandler : IRequestHandler<GetOrderStat
         var absolutePrice = await results.ReadFirstAsync<MerchItemAbsolutePrice>();
         var absoluteSelfPrice = await results.ReadFirstAsync<MerchItemAbsoluteSelfPrice>();
         var absoluteAmountSold = await results.ReadFirstAsync<MerchItemAbsoluteAmountSold>();
-        var absoluteAmountLeft = await results.ReadFirstAsync<MerchItemAbsoluteAmountLeft>();
 
         return new GetOrderStatisticQueryResponse(_mapper.Map<IEnumerable<MerchItemStatistic>>(totals),
                                                   absoluteAmountSold.absolute_amount_sold,
-                                                  absoluteAmountLeft.absolute_amount_left,
                                                   absolutePrice.absolute_price,
                                                   absoluteSelfPrice.absolute_self_price);
     }

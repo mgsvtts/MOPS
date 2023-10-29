@@ -1,5 +1,4 @@
 using Dapper;
-using Domain.Common.ValueObjects;
 using Domain.TypeAggregate.Repositories;
 using Domain.TypeAggregate.ValueObjects;
 using Infrastructure.Models;

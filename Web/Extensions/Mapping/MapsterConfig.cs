@@ -4,6 +4,7 @@ using Application.Commands.MerchItems.UpdateMerchItem;
 using Application.Commands.Orders.Create;
 using Application.Commands.Types.CreateType;
 using Application.Commands.Types.UpdateType;
+using Application.Queries.Orders.GetAllOrders;
 using Application.Queries.Orders.Statistics;
 using Contracts.MerchItems;
 using Contracts.MerchItems.Calculate;
@@ -116,11 +117,6 @@ public static class MapsterConfig
                                                         src.Name,
                                                         DateTime.Now));
 
-        TypeAdapterConfig<Domain.TypeAggregate.Type, types>
-          .ForType()
-          .Map(dest => dest.id, src => src.Id.Identity.ToString())
-          .Map(dest => dest.name, src => src.Name.Value);
-
         TypeAdapterConfig<types, Domain.TypeAggregate.Type>
           .ForType()
           .MapWith(src => new Domain.TypeAggregate.Type(new TypeId(Guid.Parse(src.id)),
@@ -132,7 +128,8 @@ public static class MapsterConfig
           .MapWith(src => new types
           {
               id = src.Id.Identity.ToString(),
-              name = src.Name.Value
+              name = src.Name.Value,
+              created_at = src.CreatedAt
           });
 
         TypeAdapterConfig<Domain.TypeAggregate.Type, TypeDto>
@@ -148,7 +145,8 @@ public static class MapsterConfig
              id = Guid.NewGuid().ToString(),
              merch_item_id = src.ItemId.Identity.ToString(),
              amount = src.Amount.Value,
-             price = src.Price.Value
+             price = src.Price.Value,
+             self_price = src.SelfPrice.Value
          });
 
         TypeAdapterConfig<CreateOrderCommand, Domain.OrderAggregate.Order>
@@ -173,11 +171,25 @@ public static class MapsterConfig
             payment_method = (Infrastructure.Misc.Order.PaymentMethod)(int)src.PaymentMethod
         });
 
+        TypeAdapterConfig<orders, GetAllOrdersResponseOrder>
+        .ForType()
+        .MapWith(src => new GetAllOrdersResponseOrder(Guid.Parse(src.id),
+                                                      src.created_at,
+                                                      (PaymentMethod)(int)src.payment_method,
+                                                      src.order_items.Select(x => new GetAllOrdersResponseOrderItem(Guid.Parse(x.id),
+                                                                                                                  x.price,
+                                                                                                                  x.self_price,
+                                                                                                                  x.amount,
+                                                                                                                  new GetAllOrdersResponseMerchItem(Guid.Parse(x.merch_item_id),
+                                                                                                                                                               x.merch_item.name,
+                                                                                                                                                               new GetAllOrdersResponseType(Guid.Parse(x.merch_item.type_id), x.merch_item.type.name))))));
+
         TypeAdapterConfig<CreateOrderRequest, CreateOrderCommand>
         .ForType()
         .MapWith(src => new CreateOrderCommand(src.Items.Select(x => new OrderItem(new MerchItemId(x.MerchItemId),
-                                                                                                                    new MerchItemAmount(x.Amount),
-                                                                                                                    null)),
+                                                                                                    new MerchItemAmount(x.Amount),
+                                                                                                    null,
+                                                                                                    null)),
                                                src.PaymentMethod));
 
         TypeAdapterConfig<Application.Queries.Orders.Statistics.Dto.MerchItemStatistic, MerchItemStatistic>

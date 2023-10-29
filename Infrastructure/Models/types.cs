@@ -1,6 +1,6 @@
 ﻿namespace Infrastructure.Models;
 
-public struct types
+public class types
 {
     public string id { get; set; }
 

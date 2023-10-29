@@ -1,10 +1,12 @@
 ﻿namespace Infrastructure.Models;
 
-public struct merch_items
+public class merch_items
 {
     public string id { get; set; }
 
     public string type_id { get; set; }
+
+    public types type { get; set; }
 
     public string name { get; set; }
 

@@ -50,7 +50,7 @@ public class MerchItemRepository : IMerchItemRepository
         using var connection = _db.CreateConnection();
 
         var items = await connection.QueryAsync<merch_items>(query);
- 
+
         return _mapper.Map<List<Domain.MerchItemAggregate.MerchItem>>(items);
     }
 
