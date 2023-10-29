@@ -6,7 +6,7 @@ public interface IMerchItemRepository
 {
     public Task AddAsync(MerchItem item);
 
-    public Task<List<MerchItem>> GetAllAsync();
+    public Task<List<MerchItem>> GetAllAsync(bool showNotAvailable = true);
 
     public Task<MerchItem?> GetByIdAsync(MerchItemId id);
 

@@ -1,5 +1,7 @@
 ﻿using Dapper;
+using Domain.OrderAggregate;
 using Domain.OrderAggregate.Repositories;
+using Domain.OrderAggregate.ValueObjects;
 using Infrastructure.Models;
 using MapsterMapper;
 
@@ -46,5 +48,25 @@ public class OrderRepository : IOrderRepository
 
         await connection.ExecuteAsync(orderQuery, dbOrder);
         await connection.ExecuteAsync(orderItemQuery, dbOrderItems);
+    }
+
+    public async Task<Order?> GetByIdAsync(OrderId id)
+    {
+        var query = $"SELECT * FROM {nameof(orders)} WHERE id = @{nameof(orders.id)}";
+
+        using var connection = _db.CreateConnection();
+
+        var order = await connection.QueryFirstOrDefaultAsync<orders>(query, new { id = id.Identity.ToString() });
+
+        return _mapper.Map<Order>(order);
+    }
+
+    public async Task DeleteAsync(Order order)
+    {
+        var query = $"DELETE FROM {nameof(orders)} WHERE {nameof(orders.id)} = @{nameof(orders.id)}";
+
+        using var connection = _db.CreateConnection();
+
+        await connection.ExecuteAsync(query, new { id = order.Id.Identity.ToString() });
     }
 }

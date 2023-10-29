@@ -1,6 +1,6 @@
 namespace Domain.OrderAggregate.ValueObjects;
 
-public sealed record OrderId
+public record struct OrderId
 {
     public Guid Identity { get; init; }
     public OrderId(Guid? identity = null)

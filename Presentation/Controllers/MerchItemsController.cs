@@ -1,8 +1,8 @@
-using Application.Commands.MerchItems.CalculateMerchItem;
-using Application.Commands.MerchItems.CreateMerchItem;
-using Application.Commands.MerchItems.DeleteMerchItem;
-using Application.Commands.MerchItems.UpdateMerchItem;
-using Application.Queries.MerchItems.GetAllMerchItems;
+using Application.Commands.MerchItems.Calculate;
+using Application.Commands.MerchItems.Create;
+using Application.Commands.MerchItems.Delete;
+using Application.Commands.MerchItems.Update;
+using Application.Queries.MerchItems.GetAll;
 using Contracts.MerchItems;
 using Contracts.MerchItems.Calculate;
 using Contracts.MerchItems.Create;
@@ -28,9 +28,9 @@ public class MerchItemsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IEnumerable<MerchItemDto>> GetAll(CancellationToken token)
+    public async Task<IEnumerable<MerchItemDto>> GetAll(bool showNotAvailable = true, CancellationToken token = default)
     {
-        var result = await _sender.Send(new GetAllMerchItemsQuery(), token);
+        var result = await _sender.Send(new GetAllMerchItemsQuery(showNotAvailable), token);
 
         return _mapper.Map<IEnumerable<MerchItemDto>>(result);
     }

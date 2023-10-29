@@ -1,7 +1,7 @@
-using Application.Commands.Types.CreateType;
-using Application.Commands.Types.DeleteType;
-using Application.Commands.Types.UpdateType;
-using Application.Queries.Types.GetAllTypes;
+using Application.Commands.Types.Create;
+using Application.Commands.Types.Delete;
+using Application.Commands.Types.Update;
+using Application.Queries.Types.GetAll;
 using Contracts.Types;
 using Contracts.Types.Create;
 using Contracts.Types.Update;

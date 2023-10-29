@@ -1,10 +1,10 @@
-﻿using Application.Commands.MerchItems.CalculateMerchItem;
-using Application.Commands.MerchItems.CreateMerchItem;
-using Application.Commands.MerchItems.UpdateMerchItem;
+﻿using Application.Commands.MerchItems.Calculate;
+using Application.Commands.MerchItems.Create;
+using Application.Commands.MerchItems.Update;
 using Application.Commands.Orders.Create;
-using Application.Commands.Types.CreateType;
-using Application.Commands.Types.UpdateType;
-using Application.Queries.Orders.GetAllOrders;
+using Application.Commands.Types.Create;
+using Application.Commands.Types.Update;
+using Application.Queries.Orders.GetAll;
 using Application.Queries.Orders.Statistics;
 using Contracts.MerchItems;
 using Contracts.MerchItems.Calculate;
@@ -187,9 +187,7 @@ public static class MapsterConfig
         TypeAdapterConfig<CreateOrderRequest, CreateOrderCommand>
         .ForType()
         .MapWith(src => new CreateOrderCommand(src.Items.Select(x => new OrderItem(new MerchItemId(x.MerchItemId),
-                                                                                                    new MerchItemAmount(x.Amount),
-                                                                                                    null,
-                                                                                                    null)),
+                                                                                                    new MerchItemAmount(x.Amount))),
                                                src.PaymentMethod));
 
         TypeAdapterConfig<Application.Queries.Orders.Statistics.Dto.MerchItemStatistic, MerchItemStatistic>

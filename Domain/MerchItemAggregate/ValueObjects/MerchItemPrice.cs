@@ -1,6 +1,6 @@
 namespace Domain.MerchItemAggregate.ValueObjects;
 
-public sealed record MerchItemPrice
+public record struct MerchItemPrice
 {
     public decimal Value { get; init; }
 

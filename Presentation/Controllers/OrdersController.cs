@@ -1,7 +1,9 @@
 ﻿using Application.Commands.Orders.Create;
-using Application.Queries.Orders.GetAllOrders;
+using Application.Commands.Orders.Delete;
+using Application.Queries.Orders.GetAll;
 using Application.Queries.Orders.Statistics;
 using Contracts.Orders.Create;
+using Domain.OrderAggregate.ValueObjects;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +23,12 @@ public class OrdersController
         _mapper = mapper;
     }
 
+    [HttpGet]
+    public async Task<object> GetAll(CancellationToken token)
+    {
+        return await _sender.Send(new GetAllOrdersQuery(), token);
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreateOrder(CreateOrderRequest request, CancellationToken token)
     {
@@ -37,9 +45,11 @@ public class OrdersController
         return await _sender.Send(new GetOrderStatisticQuery(), token);
     }
 
-    [HttpGet]
-    public async Task<object> GetAll(CancellationToken token)
+    [HttpDelete("{orderId}")]
+    public async Task Delete([FromRoute] Guid orderId, CancellationToken token)
     {
-        return await _sender.Send(new GetAllOrdersQuery(), token);
+        var command = new DeleteOrderCommand(new OrderId(orderId));
+
+        await _sender.Send(command, token);
     }
 }

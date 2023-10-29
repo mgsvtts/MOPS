@@ -1,5 +1,5 @@
 ﻿namespace Domain.TypeAggregate.ValueObjects;
-public sealed record TypeId
+public record struct TypeId
 {
     public Guid Identity { get; init; }
 

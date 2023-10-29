@@ -1,6 +1,6 @@
 namespace Domain.Common.ValueObjects;
 
-public sealed record Description
+public record struct Description
 {
     private const int _maxLength = 300;
 

@@ -43,9 +43,11 @@ public class MerchItemRepository : IMerchItemRepository
         await connection.ExecuteAsync(query, dbItem);
     }
 
-    public async Task<List<Domain.MerchItemAggregate.MerchItem>> GetAllAsync()
+    public async Task<List<Domain.MerchItemAggregate.MerchItem>> GetAllAsync(bool showNotAvailable = true)
     {
-        var query = $"SELECT * FROM {nameof(merch_items)}";
+        var query = showNotAvailable
+            ? $"SELECT * FROM {nameof(merch_items)}"
+            : $"SELECT * FROM {nameof(merch_items)} WHERE {nameof(merch_items.amount)} > 0";
 
         using var connection = _db.CreateConnection();
 
@@ -84,7 +86,7 @@ public class MerchItemRepository : IMerchItemRepository
 
         using var connection = _db.CreateConnection();
 
-        await connection.ExecuteAsync(query, new { Id = item.Id.Identity.ToString() });
+        await connection.ExecuteAsync(query, new { id = item.Id.Identity.ToString() });
     }
 
     public async Task UpdateAsync(Domain.MerchItemAggregate.MerchItem item)
