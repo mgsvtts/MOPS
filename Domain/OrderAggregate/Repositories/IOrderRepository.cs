@@ -3,4 +3,5 @@
 public interface IOrderRepository
 {
     public Task AddAsync(Order order);
+    Task<List<Order>> GetAllAsync();
 }

@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Domain.OrderAggregate;
 using Domain.OrderAggregate.Repositories;
 using Infrastructure.Models;
 using MapsterMapper;
@@ -14,6 +15,18 @@ public class OrderRepository : IOrderRepository
     {
         _db = db;
         _mapper = mapper;
+    }
+
+    public async Task<List<Order>> GetAllAsync()
+    {
+        var query = $@"select o.id, o.payment_method, o.created_at, i.id as order_item_id, i.amount, i.price, i.self_price from orders as o
+                       join order_items as i on o.id=i.order_id";
+
+        using var connection = _db.CreateConnection();
+
+        var dbOrders = await connection.QueryAsync(query, splitOn: "order_item_id");
+
+        return _mapper.Map<List<Order>>(dbOrders);
     }
 
     public async Task AddAsync(Domain.OrderAggregate.Order order)

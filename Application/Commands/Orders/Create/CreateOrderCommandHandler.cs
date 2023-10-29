@@ -1,4 +1,5 @@
-﻿using Domain.MerchItemAggregate.Repositories;
+﻿using Domain.MerchItemAggregate;
+using Domain.MerchItemAggregate.Repositories;
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Repositories;
 using MapsterMapper;
@@ -30,11 +31,7 @@ internal sealed class CreateOrderCommandHandler : IRequestHandler<CreateOrderCom
         order.AddOrderItems(request.Items)
              .SetActualPriceToItems(actualMerchItems);
 
-        foreach (var item in actualMerchItems)
-        {
-            var minusAmount = order.Items.First(x => x.ItemId == item.Id).Amount;
-            item.SubtractAmount(minusAmount);
-        }
+        SubtractAmountFromItems(order, actualMerchItems);
 
         await _orderRepository.AddAsync(order);
         var merchTasks = actualMerchItems.Select(_merchItemRepository.UpdateAsync);
@@ -42,5 +39,14 @@ internal sealed class CreateOrderCommandHandler : IRequestHandler<CreateOrderCom
         await Task.WhenAll(merchTasks);
 
         return order;
+    }
+
+    private static void SubtractAmountFromItems(Order order, List<MerchItem> actualMerchItems)
+    {
+        foreach (var item in actualMerchItems)
+        {
+            var minusAmount = order.Items.First(x => x.ItemId == item.Id).Amount;
+            item.SubtractAmount(minusAmount);
+        }
     }
 }

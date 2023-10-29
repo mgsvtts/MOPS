@@ -1,4 +1,5 @@
 ﻿using Application.Commands.Orders.Create;
+using Application.Queries.Orders.GetAllOrders;
 using Application.Queries.Orders.Statistics;
 using Contracts.Orders.Create;
 using MapsterMapper;
@@ -34,5 +35,11 @@ public class OrdersController
     public async Task<GetOrderStatisticQueryResponse> GetStatistic(CancellationToken token)
     {
         return await _sender.Send(new GetOrderStatisticQuery(), token);
+    }
+
+    [HttpGet]
+    public async Task GetAll(CancellationToken token)
+    {
+        await _sender.Send(new GetAllOrdersQuery(), token);
     }
 }
