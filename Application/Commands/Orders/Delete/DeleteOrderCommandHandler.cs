@@ -18,9 +18,9 @@ public class DeleteOrderCommandHandler : IRequestHandler<DeleteOrderCommand>
 
     public async Task Handle(DeleteOrderCommand request, CancellationToken cancellationToken)
     {
-        var type = await _orderRepository.GetByIdAsync(request.Id)
+        var order = await _orderRepository.GetByIdAsync(request.Id)
                    ?? throw new InvalidOperationException($"Cannot find order with id {request.Id.Identity}");
 
-        await _orderRepository.DeleteAsync(type);
+        await _orderRepository.DeleteAsync(order);
     }
 }

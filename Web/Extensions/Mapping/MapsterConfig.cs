@@ -171,6 +171,16 @@ public static class MapsterConfig
             payment_method = (Infrastructure.Misc.Order.PaymentMethod)(int)src.PaymentMethod
         });
 
+        TypeAdapterConfig<orders, Domain.OrderAggregate.Order>
+       .ForType()
+       .MapWith(src => new Domain.OrderAggregate.Order(new OrderId(Guid.Parse(src.id)),
+                                                       src.order_items.Select(x=>new OrderItem(new MerchItemId(Guid.Parse(x.merch_item_id)),
+                                                                                               new MerchItemAmount(x.amount),
+                                                                                               new MerchItemPrice(x.price),
+                                                                                               new MerchItemPrice(x.self_price))),
+                                                       (PaymentMethod)(int)src.payment_method,
+                                                        src.created_at));
+
         TypeAdapterConfig<orders, GetAllOrdersResponseOrder>
         .ForType()
         .MapWith(src => new GetAllOrdersResponseOrder(Guid.Parse(src.id),

@@ -1,4 +1,4 @@
-﻿using Application.Queries.Orders.Statistics.Dto.Absolutes;
+﻿using Application.Queries.Orders.Statistics.Dto;
 using Dapper;
 using Infrastructure;
 using Infrastructure.Models;
@@ -25,37 +25,38 @@ public sealed class GetOrderStatisticQueryHandler : IRequestHandler<GetOrderStat
 	                                  SUM(o.{nameof(order_items.self_price)}) AS total_self_price,
                                       SUM(o.{nameof(order_items.price)}) AS total_price,
                                       SUM(o.{nameof(order_items.amount)}) AS total_amount
-                               FROM
-                                   {nameof(merch_items)} AS items
-                               LEFT JOIN
-                                   {nameof(order_items)} AS o
-                               ON
-                                   o.{nameof(order_items.merch_item_id)} = items.id
+                               FROM {nameof(merch_items)} AS items
+                               
+                               LEFT JOIN {nameof(order_items)} AS o ON o.{nameof(order_items.merch_item_id)} = items.id
+                               LEFT JOIN {nameof(orders)} AS ord ON ord.{nameof(orders.id)} = o.{nameof(order_items.order_id)}
+                                
+                               WHERE ord.created_at BETWEEN '{request.DateFrom:yyyy-MM-dd}' AND '{request.DateTo:yyyy-MM-dd}' 
+                
                                GROUP BY
                                    items.id
+
                                ORDER BY items.{nameof(merch_items.name)};
 
-                               SELECT SUM({nameof(order_items.price)}) as absolute_price
-                               FROM {nameof(order_items)};
+                               SELECT SUM(i.{nameof(order_items.price)}) as absolute_price,
+                                      SUM(i.{nameof(order_items.self_price)}) as absolute_self_price,
+                                      SUM(i.{nameof(order_items.amount)}) as absolute_amount_sold
 
-                               SELECT SUM({nameof(order_items.self_price)}) as absolute_self_price
-                               FROM {nameof(order_items)};
+                               FROM {nameof(order_items)} as i
 
-                               SELECT SUM({nameof(order_items.amount)}) as absolute_amount_sold
-                               FROM {nameof(order_items)};";
+                               LEFT JOIN {nameof(orders)} as o on o.{nameof(orders.id)}=i.{nameof(order_items.order_id)}
+
+                               WHERE o.{nameof(orders.created_at)} BETWEEN '{request.DateFrom:yyyy-MM-dd}' AND '{request.DateTo:yyyy-MM-dd}';";
 
         using var connection = _db.CreateConnection();
 
         var results = await connection.QueryMultipleAsync(statisticQuery);
 
         var totals = await results.ReadAsync<Dto.MerchItemStatistic>();
-        var absolutePrice = await results.ReadFirstAsync<MerchItemAbsolutePrice>();
-        var absoluteSelfPrice = await results.ReadFirstAsync<MerchItemAbsoluteSelfPrice>();
-        var absoluteAmountSold = await results.ReadFirstAsync<MerchItemAbsoluteAmountSold>();
+        var absolutePrice = await results.ReadFirstAsync<MerchItemAbsoluteStatistic>();
 
         return new GetOrderStatisticQueryResponse(_mapper.Map<IEnumerable<MerchItemStatistic>>(totals),
-                                                  absoluteAmountSold.absolute_amount_sold,
+                                                  absolutePrice.absolute_amount_sold,
                                                   absolutePrice.absolute_price,
-                                                  absoluteSelfPrice.absolute_self_price);
+                                                  absolutePrice.absolute_self_price);
     }
 }
