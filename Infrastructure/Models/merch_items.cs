@@ -19,4 +19,6 @@ public class merch_items
     public int amount { get; set; }
 
     public DateTime created_at { get; set; }
+
+    public List<images> images { get; set; }
 }
