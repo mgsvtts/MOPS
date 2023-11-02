@@ -1,3 +1,4 @@
+using Application.Commands.MerchItems.Common.Services;
 using Domain.MerchItemAggregate.Repositories;
 using Domain.OrderAggregate.Repositories;
 using Domain.TypeAggregate.Repositories;
@@ -12,6 +13,7 @@ public static class ServiceExtensions
         services.AddTransient<IMerchItemRepository, MerchItemRepository>();
         services.AddTransient<ITypeRepository, TypeRepository>();
         services.AddTransient<IOrderRepository, OrderRepository>();
+        services.AddTransient<IImageRepository, ImageRepository>();
 
         return services;
     }

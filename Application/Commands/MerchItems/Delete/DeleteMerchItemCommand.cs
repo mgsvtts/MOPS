@@ -3,4 +3,4 @@ using MediatR;
 
 namespace Application.Commands.MerchItems.Delete;
 
-public sealed record DeleteMerchItemCommand(MerchItemId Id) : IRequest;
+public record struct DeleteMerchItemCommand(MerchItemId Id) : IRequest;

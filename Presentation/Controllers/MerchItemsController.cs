@@ -1,16 +1,23 @@
+using Application.Commands.MerchItems.AddImage;
 using Application.Commands.MerchItems.Calculate;
+using Application.Commands.MerchItems.Common.Services;
 using Application.Commands.MerchItems.Create;
 using Application.Commands.MerchItems.Delete;
 using Application.Commands.MerchItems.Update;
 using Application.Queries.MerchItems.GetAll;
 using Contracts.MerchItems;
+using Contracts.MerchItems.AddImage;
 using Contracts.MerchItems.Calculate;
 using Contracts.MerchItems.Create;
 using Contracts.MerchItems.Update;
+using Domain.MerchItemAggregate.Entities;
+using Domain.MerchItemAggregate.Entities.ValueObjects.Images;
 using Domain.MerchItemAggregate.ValueObjects;
 using MapsterMapper;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace Presentation.Controllers;
 
@@ -20,11 +27,13 @@ public class MerchItemsController : ControllerBase
 {
     private readonly ISender _sender;
     private readonly IMapper _mapper;
+    private readonly IImageRepository _imageRepo;
 
-    public MerchItemsController(ISender sender, IMapper mapper)
+    public MerchItemsController(ISender sender, IMapper mapper, IImageRepository imageRepo)
     {
         _sender = sender;
         _mapper = mapper;
+        _imageRepo = imageRepo;
     }
 
     [HttpGet]
@@ -71,5 +80,23 @@ public class MerchItemsController : ControllerBase
         await _sender.Send(new DeleteMerchItemCommand(new MerchItemId(itemId)), token);
 
         return NoContent();
+    }
+
+
+    [HttpPost("add-image/{itemId}")]
+    public async Task AddImage([FromRoute]Guid itemId, [FromForm]IEnumerable<AddImageRequest> images, CancellationToken token)
+    {
+        var imageDictionary = new Dictionary<Image, Stream>();
+
+        foreach(var item in images)
+        {
+            using var stream = item.File.OpenReadStream();
+
+            imageDictionary.Add(new Image(new ImageId(), new MerchItemId(itemId), isMain: item.IsMain), stream);
+        }
+
+        var command = new AddImageCommand(imageDictionary);
+
+        await _sender.Send(command, token);
     }
 }

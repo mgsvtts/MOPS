@@ -1,18 +1,20 @@
 using Domain.Common;
 using Domain.Common.ValueObjects;
 using Domain.MerchItemAggregate.Entities.ValueObjects.Images;
+using Domain.MerchItemAggregate.ValueObjects;
 
 namespace Domain.MerchItemAggregate.Entities;
 
 public class Image : Entity<ImageId>
 {
-    public Name Name { get; private set; }
+    public MerchItemId MerchItemId { get; private set; }
+    public string? Url { get; private set; }
+    public bool IsMain { get; private set; }
 
-    public Description Description { get; private set; }
-
-    public Image(ImageId id, Name name, Description description) : base(id)
+    public Image(ImageId id, MerchItemId merchItemId, string? url = null, bool isMain = false) : base(id)
     {
-        Name = name;
-        Description = description;
+        MerchItemId = merchItemId;
+        Url = url;
+        IsMain = isMain;
     }
 }

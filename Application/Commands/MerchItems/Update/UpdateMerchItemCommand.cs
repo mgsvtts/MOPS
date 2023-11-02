@@ -6,10 +6,10 @@ using MediatR;
 
 namespace Application.Commands.MerchItems.Update;
 
-public sealed record class UpdateMerchItemCommand(MerchItemId Id,
-                                                  TypeId? TypeId = null,
-                                                  Name? Name = null,
-                                                  Description? Description = null,
-                                                  MerchItemPrice? Price = null,
-                                                  MerchItemPrice? SelfPrice = null,
-                                                  MerchItemAmount? AmountLeft = null) : IRequest<MerchItem>;
+public record struct UpdateMerchItemCommand(MerchItemId Id,
+                                            TypeId? TypeId = null,
+                                            Name? Name = null,
+                                            Description? Description = null,
+                                            MerchItemPrice? Price = null,
+                                            MerchItemPrice? SelfPrice = null,
+                                            MerchItemAmount? AmountLeft = null) : IRequest<MerchItem>;

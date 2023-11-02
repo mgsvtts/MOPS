@@ -4,4 +4,4 @@ using MediatR;
 
 namespace Application.Commands.Types.Update;
 
-public sealed record UpdateTypeCommand(TypeId Id, Name Name) : IRequest<Domain.TypeAggregate.Type>;
+public record struct UpdateTypeCommand(TypeId Id, Name Name) : IRequest<Domain.TypeAggregate.Type>;

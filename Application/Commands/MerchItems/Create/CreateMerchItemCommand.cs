@@ -5,7 +5,7 @@ using Domain.TypeAggregate.ValueObjects;
 using MediatR;
 
 namespace Application.Commands.MerchItems.Create;
-public sealed record CreateMerchItemCommand(TypeId TypeId,
+public record struct CreateMerchItemCommand(TypeId TypeId,
                                             Name Name,
                                             Description? Description,
                                             MerchItemPrice Price,

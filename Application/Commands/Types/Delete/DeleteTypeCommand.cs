@@ -3,4 +3,4 @@ using MediatR;
 
 namespace Application.Commands.Types.Delete;
 
-public sealed record DeleteTypeCommand(TypeId Id) : IRequest;
+public record struct DeleteTypeCommand(TypeId Id) : IRequest;
