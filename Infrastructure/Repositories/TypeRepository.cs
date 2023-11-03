@@ -1,6 +1,7 @@
 using Dapper;
 using Domain.TypeAggregate.Repositories;
 using Domain.TypeAggregate.ValueObjects;
+using Infrastructure.Misc.Queries;
 using Infrastructure.Models;
 using MapsterMapper;
 
@@ -19,7 +20,7 @@ public class TypeRepository : ITypeRepository
 
     public async Task<List<Domain.TypeAggregate.Type>> GetAllAsync()
     {
-        var query = $"SELECT * FROM {nameof(types)}";
+        var query = Queries.Type.GetAll();
 
         using var connection = _db.CreateConnection();
 
@@ -30,12 +31,7 @@ public class TypeRepository : ITypeRepository
 
     public async Task AddAsync(Domain.TypeAggregate.Type type)
     {
-        var query = @$"INSERT INTO {nameof(types)} ({nameof(types.id)},
-                                          {nameof(types.name)},
-                                          {nameof(types.created_at)})
-                       VALUES (@{nameof(types.id)},
-                               @{nameof(types.name)},
-                               @{nameof(types.created_at)})";
+        var query = Queries.Type.Add();
 
         var dbType = _mapper.Map<types>(type);
 
@@ -46,7 +42,7 @@ public class TypeRepository : ITypeRepository
 
     public async Task DeleteAsync(Domain.TypeAggregate.Type type)
     {
-        var query = $"DELETE FROM {nameof(types)} WHERE id = @{nameof(types.id)}";
+        var query = Queries.Type.Delete();
 
         using var connection = _db.CreateConnection();
 
@@ -55,7 +51,7 @@ public class TypeRepository : ITypeRepository
 
     public async Task<Domain.TypeAggregate.Type> GetByIdAsync(TypeId id)
     {
-        var query = $"SELECT * FROM {nameof(types)} WHERE id = @{nameof(types.id)}";
+        var query = Queries.Type.GetById();
 
         using var connection = _db.CreateConnection();
 
@@ -66,7 +62,7 @@ public class TypeRepository : ITypeRepository
 
     public async Task UpdateAsync(Domain.TypeAggregate.Type type)
     {
-        var query = $"UPDATE {nameof(types)} SET {nameof(types.name)} = @{nameof(types.name)}";
+        var query = Queries.Type.Update();
 
         using var connection = _db.CreateConnection();
 

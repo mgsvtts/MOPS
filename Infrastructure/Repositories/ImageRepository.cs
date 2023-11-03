@@ -5,6 +5,7 @@ using Domain.MerchItemAggregate;
 using Domain.MerchItemAggregate.Entities;
 using Domain.MerchItemAggregate.ValueObjects;
 using Infrastructure;
+using Infrastructure.Misc.Queries;
 using Infrastructure.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -49,14 +50,7 @@ public class ImageRepository : IImageRepository
             File = new FileDescription(image.Key.Id.Identity.ToString(), image.Value)
         });
 
-        var query = @$"INSERT INTO {nameof(images)} ({nameof(images.id)},
-                                                     {nameof(images.merch_item_id)},
-                                                     {nameof(images.url)},
-                                                     {nameof(images.is_main)})
-                       VALUES (@{image.Key.Id.Identity},
-                               @{image.Key.MerchItemId.Identity},
-                               @{result.SecureUrl},
-                               @{image.Key.IsMain})";
+        var query = Queries.Image.Add(image, result);
 
         using var connection = _db.CreateConnection();
 

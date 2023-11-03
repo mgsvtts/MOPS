@@ -2,6 +2,7 @@
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Repositories;
 using Domain.OrderAggregate.ValueObjects;
+using Infrastructure.Misc.Queries;
 using Infrastructure.Models;
 using MapsterMapper;
 
@@ -18,27 +19,10 @@ public class OrderRepository : IOrderRepository
         _mapper = mapper;
     }
 
-    public async Task AddAsync(Domain.OrderAggregate.Order order)
+    public async Task AddAsync(Order order)
     {
-        var orderQuery = $@"INSERT INTO {nameof(orders)} ({nameof(orders.id)},
-                                                 {nameof(orders.created_at)},
-                                                 {nameof(orders.payment_method)})
-                             VALUES (@{nameof(orders.id)},
-                                     @{nameof(orders.created_at)},
-                                     @{nameof(orders.payment_method)})";
-
-        var orderItemQuery = $@"INSERT INTO {nameof(order_items)} ({nameof(order_items.id)},
-                                                         {nameof(order_items.order_id)},
-                                                         {nameof(order_items.merch_item_id)},
-                                                         {nameof(order_items.amount)},
-                                                         {nameof(order_items.price)},
-                                                         {nameof(order_items.self_price)})
-                                VALUES (@{nameof(order_items.id)},
-                                        @{nameof(order_items.order_id)},
-                                        @{nameof(order_items.merch_item_id)},
-                                        @{nameof(order_items.amount)},
-                                        @{nameof(order_items.price)},
-                                        @{nameof(order_items.self_price)})";
+        var orderQuery = Queries.Order.AddOrder();
+        var orderItemQuery = Queries.Order.AddOrderItems();
 
         var dbOrder = _mapper.Map<orders>(order);
         var dbOrderItems = _mapper.Map<List<order_items>>(order.Items);
@@ -52,7 +36,7 @@ public class OrderRepository : IOrderRepository
 
     public async Task<Order?> GetByIdAsync(OrderId id)
     {
-        var query = $"SELECT * FROM {nameof(orders)} WHERE id = @{nameof(orders.id)}";
+        var query = Queries.Order.GetById();
 
         using var connection = _db.CreateConnection();
 
@@ -63,7 +47,7 @@ public class OrderRepository : IOrderRepository
 
     public async Task DeleteAsync(Order order)
     {
-        var query = $"DELETE FROM {nameof(orders)} WHERE {nameof(orders.id)} = @{nameof(orders.id)}";
+        var query = Queries.Order.Delete();
 
         using var connection = _db.CreateConnection();
 

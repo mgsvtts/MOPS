@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Domain.MerchItemAggregate.Repositories;
 using Domain.MerchItemAggregate.ValueObjects;
+using Infrastructure.Misc.Queries;
 using Infrastructure.Models;
 using MapsterMapper;
 
@@ -19,22 +20,7 @@ public class MerchItemRepository : IMerchItemRepository
 
     public async Task AddAsync(Domain.MerchItemAggregate.MerchItem item)
     {
-        var query = @$"INSERT INTO {nameof(merch_items)} ({nameof(merch_items.id)},
-                                                          {nameof(merch_items.type_id)},
-                                                          {nameof(merch_items.name)},
-                                                          {nameof(merch_items.description)},
-                                                          {nameof(merch_items.price)},
-                                                          {nameof(merch_items.self_price)},
-                                                          {nameof(merch_items.amount)},
-                                                          {nameof(merch_items.created_at)})
-                       VALUES (@{nameof(merch_items.id)},
-                               @{nameof(merch_items.type_id)},
-                               @{nameof(merch_items.name)},
-                               @{nameof(merch_items.description)},
-                               @{nameof(merch_items.price)},
-                               @{nameof(merch_items.self_price)},
-                               @{nameof(merch_items.amount)},
-                               @{nameof(merch_items.created_at)})";
+        var query = Queries.MerchItem.AddMerchItem();
 
         var dbItem = _mapper.Map<merch_items>(item);
 
@@ -45,9 +31,7 @@ public class MerchItemRepository : IMerchItemRepository
 
     public async Task<List<Domain.MerchItemAggregate.MerchItem>> GetAllAsync(bool showNotAvailable = true)
     {
-        var query = showNotAvailable
-            ? $"SELECT * FROM {nameof(merch_items)}"
-            : $"SELECT * FROM {nameof(merch_items)} WHERE {nameof(merch_items.amount)} > 0";
+        var query = Queries.MerchItem.GetAllMerchItems(showNotAvailable);
 
         using var connection = _db.CreateConnection();
 
@@ -58,7 +42,7 @@ public class MerchItemRepository : IMerchItemRepository
 
     public async Task<List<Domain.MerchItemAggregate.MerchItem>> GetAllByIdsAsync(IEnumerable<MerchItemId> ids)
     {
-        var query = $"SELECT * FROM {nameof(merch_items)} WHERE {nameof(merch_items.id)} IN @Ids";
+        var query = Queries.MerchItem.GetAllByIds();
 
         var queryIds = ids.Select(x => x.Identity.ToString()).ToArray();
 
@@ -71,7 +55,7 @@ public class MerchItemRepository : IMerchItemRepository
 
     public async Task<Domain.MerchItemAggregate.MerchItem?> GetByIdAsync(MerchItemId id)
     {
-        var query = $"SELECT * FROM {nameof(merch_items)} LIMIT(1)";
+        var query = Queries.MerchItem.GetById();
 
         using var connection = _db.CreateConnection();
 
@@ -82,7 +66,7 @@ public class MerchItemRepository : IMerchItemRepository
 
     public async Task DeleteAsync(Domain.MerchItemAggregate.MerchItem item)
     {
-        var query = $"DELETE FROM {nameof(merch_items)} WHERE {nameof(merch_items.id)} = @{nameof(merch_items.id)}";
+        var query = Queries.MerchItem.Delete();
 
         using var connection = _db.CreateConnection();
 
@@ -91,14 +75,7 @@ public class MerchItemRepository : IMerchItemRepository
 
     public async Task UpdateAsync(Domain.MerchItemAggregate.MerchItem item)
     {
-        var query = @$"UPDATE {nameof(merch_items)} SET
-                    {nameof(merch_items.type_id)} = @{nameof(merch_items.type_id)},
-                    {nameof(merch_items.name)} = @{nameof(merch_items.name)},
-                    {nameof(merch_items.description)} = @{nameof(merch_items.description)},
-                    {nameof(merch_items.price)} = @{nameof(merch_items.price)},
-                    {nameof(merch_items.self_price)} = @{nameof(merch_items.self_price)},
-                    {nameof(merch_items.amount)} = @{nameof(merch_items.amount)}
-                     WHERE {nameof(merch_items.id)} = @{nameof(merch_items.id)}";
+        var query = Queries.MerchItem.Update();
 
         var dbItem = _mapper.Map<merch_items>(item);
 
