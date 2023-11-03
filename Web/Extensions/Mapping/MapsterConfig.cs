@@ -1,4 +1,5 @@
-﻿using Application.Commands.MerchItems.Calculate;
+﻿using Application.Commands.MerchItems.AddImage;
+using Application.Commands.MerchItems.Calculate;
 using Application.Commands.MerchItems.Create;
 using Application.Commands.MerchItems.Update;
 using Application.Commands.Orders.Create;
@@ -15,6 +16,8 @@ using Contracts.Types;
 using Contracts.Types.Create;
 using Contracts.Types.Update;
 using Domain.Common.ValueObjects;
+using Domain.MerchItemAggregate.Entities;
+using Domain.MerchItemAggregate.Entities.ValueObjects.Images;
 using Domain.MerchItemAggregate.ValueObjects;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.TypeAggregate.ValueObjects;
@@ -207,6 +210,14 @@ public static class MapsterConfig
                                                  src.total_self_price,
                                                  src.total_price,
                                                  src.total_amount));
+
+        TypeAdapterConfig<(Guid itemId, IEnumerable<Contracts.MerchItems.AddImage.AddImageRequest> images), AddImageCommand>
+          .ForType()
+          .MapWith(src => new AddImageCommand(src.images.Select(x => new AddImageRequest(new Image(new ImageId(Guid.NewGuid()),
+                                                                                                   new MerchItemId(src.itemId),
+                                                                                                   null,
+                                                                                                   x.IsMain),
+                                                                                          x.File.OpenReadStream()))));
 
         TypeAdapterConfig.GlobalSettings.Scan(Assembly.GetExecutingAssembly());
 

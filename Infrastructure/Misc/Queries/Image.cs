@@ -12,17 +12,16 @@ internal partial class Queries
 {
     internal class Image
     {
-        internal static string Add(KeyValuePair<Domain.MerchItemAggregate.Entities.Image, Stream> image,
-                                   ImageUploadResult result)
+        internal static string Add()
         {
             return @$"INSERT INTO {nameof(images)} ({nameof(images.id)},
                                                      {nameof(images.merch_item_id)},
                                                      {nameof(images.url)},
                                                      {nameof(images.is_main)})
-                       VALUES (@{image.Key.Id.Identity},
-                               @{image.Key.MerchItemId.Identity},
-                               @{result.SecureUrl},
-                               @{image.Key.IsMain})";
+                       VALUES (@ImageId,
+                               @ItemId,
+                               @SecureUrl,
+                               @IsMain)";
         }
     }
 

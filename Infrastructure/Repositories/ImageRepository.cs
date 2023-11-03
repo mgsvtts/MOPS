@@ -3,6 +3,7 @@ using CloudinaryDotNet.Actions;
 using Dapper;
 using Domain.MerchItemAggregate;
 using Domain.MerchItemAggregate.Entities;
+using Domain.MerchItemAggregate.Entities.ValueObjects.Images;
 using Domain.MerchItemAggregate.ValueObjects;
 using Infrastructure;
 using Infrastructure.Misc.Queries;
@@ -36,12 +37,8 @@ public class ImageRepository : IImageRepository
     public async Task AddAsync(IDictionary<Image, Stream> images)
     {
         images = images.Where(x => x.Value.Length != 0).ToDictionary(x => x.Key, x => x.Value);
-        foreach(var image in images)
-        {
-            await UploadImageAsync(image);
-        }
-        //await Task.WhenAll(images.Select(UploadImageAsync));
-    } 
+        await Task.WhenAll(images.Select(UploadImageAsync));
+    }
 
     private async Task UploadImageAsync(KeyValuePair<Image, Stream> image)
     {
@@ -50,10 +47,16 @@ public class ImageRepository : IImageRepository
             File = new FileDescription(image.Key.Id.Identity.ToString(), image.Value)
         });
 
-        var query = Queries.Image.Add(image, result);
+        var query = Queries.Image.Add();
 
         using var connection = _db.CreateConnection();
 
-        await connection.ExecuteAsync(query);
+        await connection.ExecuteAsync(query, new
+        {
+            ImageId = image.Key.Id.Identity.ToString(),
+            ItemId = image.Key.MerchItemId.Identity.ToString(),
+            SecureUrl = result.SecureUrl.ToString(),
+            image.Key.IsMain
+        });
     }
 }

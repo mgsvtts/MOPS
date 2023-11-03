@@ -10,8 +10,6 @@ using Contracts.MerchItems.AddImage;
 using Contracts.MerchItems.Calculate;
 using Contracts.MerchItems.Create;
 using Contracts.MerchItems.Update;
-using Domain.MerchItemAggregate.Entities;
-using Domain.MerchItemAggregate.Entities.ValueObjects.Images;
 using Domain.MerchItemAggregate.ValueObjects;
 using MapsterMapper;
 using MediatR;
@@ -84,19 +82,9 @@ public class MerchItemsController : ControllerBase
 
 
     [HttpPost("add-image/{itemId}")]
-    public async Task AddImage([FromRoute]Guid itemId, [FromForm]IEnumerable<AddImageRequest> images, CancellationToken token)
+    public async Task AddImage([FromRoute]Guid itemId, [FromForm]IEnumerable<Contracts.MerchItems.AddImage.AddImageRequest> images, CancellationToken token)
     {
-        var imageDictionary = new Dictionary<Image, Stream>();
-
-        foreach(var item in images)
-        {
-            using var stream = item.File.OpenReadStream();
-
-            imageDictionary.Add(new Image(new ImageId(), new MerchItemId(itemId), isMain: item.IsMain), stream);
-        }
-
-        var command = new AddImageCommand(imageDictionary);
-
+        var command = _mapper.Map<AddImageCommand>((itemId, images));
         await _sender.Send(command, token);
     }
 }

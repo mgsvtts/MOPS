@@ -1,4 +1,5 @@
-﻿using Application.Commands.MerchItems.Common.Services;
+﻿using Application.Commands.MerchItems.AddImage.Exceptions;
+using Application.Commands.MerchItems.Common.Services;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,16 @@ public class AddImageCommandHandler : IRequestHandler<AddImageCommand>
 
     public async Task Handle(AddImageCommand request, CancellationToken cancellationToken)
     {
-        await _imageRepository.AddAsync(request.Images);
+        if (request.Images.Count(x => x.Image.IsMain) > 1)
+        {
+            throw new OnlyOneMainImageAllowedException(request.Images.First().Image.MerchItemId);
+        }
+
+        await _imageRepository.AddAsync(request.Images.ToDictionary(key => key.Image, value => value.ImageStream));
+
+        foreach (var item in request.Images.Select(x=>x.ImageStream))
+        {
+            await item.DisposeAsync();
+        }
     }
 }
