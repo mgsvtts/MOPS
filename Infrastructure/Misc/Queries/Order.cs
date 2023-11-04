@@ -38,7 +38,7 @@ internal partial class Queries
 
         internal static string GetById()
         {
-            return $"SELECT * FROM {nameof(orders)} WHERE id = @{nameof(orders.id)}";
+            return $"SELECT * FROM {nameof(orders)} WHERE id = @{nameof(orders.id)} LIMIT (1)";
         }
 
         internal static string Delete()

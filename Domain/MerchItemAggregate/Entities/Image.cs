@@ -17,4 +17,11 @@ public class Image : Entity<ImageId>
         Url = url;
         IsMain = isMain;
     }
+
+    public Image NotMain()
+    {
+        IsMain = false;
+
+        return this;
+    }
 }

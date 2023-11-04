@@ -1,4 +1,5 @@
 ﻿using CloudinaryDotNet.Actions;
+using Domain.MerchItemAggregate.ValueObjects;
 using Infrastructure.Models;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,15 @@ internal partial class Queries
                                @ItemId,
                                @SecureUrl,
                                @IsMain)";
+        }
+
+        internal static string Update()
+        {
+            return @$"UPDATE {nameof(images)} SET
+                    {nameof(images.is_main)} = @{nameof(images.is_main)},
+                    {nameof(images.merch_item_id)} = @{nameof(images.merch_item_id)},
+                    {nameof(images.url)} = @{nameof(images.url)}
+                     WHERE {nameof(images.id)} = @{nameof(images.id)}";
         }
     }
 

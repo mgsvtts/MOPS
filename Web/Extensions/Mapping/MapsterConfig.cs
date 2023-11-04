@@ -60,7 +60,8 @@ public static class MapsterConfig
                                                                    new MerchItemPrice(src.price),
                                                                    new MerchItemPrice(src.self_price),
                                                                    new MerchItemAmount(src.amount),
-                                                                   src.created_at));
+                                                                   src.created_at,
+                                                                   null));
 
         TypeAdapterConfig<CreateMerchItemRequest, CreateMerchItemCommand>
          .ForType()
@@ -90,7 +91,8 @@ public static class MapsterConfig
                                                                  src.Price,
                                                                  src.SelfPrice,
                                                                  src.AmountLeft,
-                                                                 DateTime.Now));
+                                                                 DateTime.Now,
+                                                                 null));
 
         TypeAdapterConfig<CreateTypeRequest, CreateTypeCommand>
          .ForType()
@@ -134,6 +136,20 @@ public static class MapsterConfig
               name = src.Name.Value,
               created_at = src.CreatedAt
           });
+
+        TypeAdapterConfig<Image, images>
+          .ForType()
+          .MapWith(src => new images
+          {
+              id = src.Id.Identity.ToString(),
+              is_main = src.IsMain,
+              merch_item_id = src.MerchItemId.Identity.ToString(),
+              url = src.Url
+          });
+
+        TypeAdapterConfig<images, Image>
+          .ForType()
+          .MapWith(src => new Image(new ImageId(Guid.Parse(src.id)), new MerchItemId(Guid.Parse(src.merch_item_id)), src.url, src.is_main));
 
         TypeAdapterConfig<Domain.TypeAggregate.Type, TypeDto>
          .ForType()

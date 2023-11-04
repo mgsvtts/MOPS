@@ -45,7 +45,7 @@ internal partial class Queries
 
         internal static string GetById()
         {
-            return $"SELECT * FROM {nameof(merch_items)} LIMIT(1)";
+            return $"SELECT * FROM {nameof(merch_items)} WHERE {nameof(merch_items.id)} = @{nameof(merch_items.id)} LIMIT(1)";
         }
 
         internal static string Delete()

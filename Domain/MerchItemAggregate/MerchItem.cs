@@ -1,5 +1,6 @@
 ﻿using Domain.Common;
 using Domain.Common.ValueObjects;
+using Domain.MerchItemAggregate.Entities;
 using Domain.MerchItemAggregate.ValueObjects;
 using Domain.TypeAggregate.ValueObjects;
 
@@ -21,6 +22,8 @@ public class MerchItem : AggregateRoot<MerchItemId>
 
     public DateTime CreatedAt { get; private set; }
 
+    public IEnumerable<Image> Images { get; private set; }
+
     public MerchItem(MerchItemId id,
                      TypeId typeId,
                      Name? name = null,
@@ -28,7 +31,8 @@ public class MerchItem : AggregateRoot<MerchItemId>
                      MerchItemPrice? price = null,
                      MerchItemPrice? selfPrice = null,
                      MerchItemAmount? amountLeft = null,
-                     DateTime? createdAt = null) : base(id)
+                     DateTime? createdAt = null,
+                     IEnumerable<Image>? images = null) : base(id)
     {
         Id = id;
         TypeId = typeId;
@@ -38,6 +42,7 @@ public class MerchItem : AggregateRoot<MerchItemId>
         SelfPrice = selfPrice ?? new MerchItemPrice();
         AmountLeft = amountLeft ?? new MerchItemAmount();
         CreatedAt = createdAt ?? DateTime.Now;
+        Images = images ?? Array.Empty<Image>();
     }
 
     public MerchItem SubtractAmount(MerchItemAmount amount)

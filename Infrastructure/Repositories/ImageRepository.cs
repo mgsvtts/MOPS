@@ -8,6 +8,7 @@ using Domain.MerchItemAggregate.ValueObjects;
 using Infrastructure;
 using Infrastructure.Misc.Queries;
 using Infrastructure.Models;
+using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -21,9 +22,10 @@ using System.Threading.Tasks;
 namespace Application.Commands.MerchItems.Common.Services;
 public class ImageRepository : IImageRepository
 {
-    private readonly Cloudinary _cloudinary;
     private readonly DbContext _db;
-    public ImageRepository(IConfiguration config, DbContext db)
+    private readonly IMapper _mapper;
+    private readonly Cloudinary _cloudinary;
+    public ImageRepository(IConfiguration config, DbContext db, IMapper mapper)
     {
         var settings = config.GetSection("Cloudinary");
 
@@ -31,13 +33,24 @@ public class ImageRepository : IImageRepository
                                                  settings.GetValue<string>("ApiKey"),
                                                  settings.GetValue<string>("ApiSecret")));
         _db = db;
+        _mapper = mapper;
     }
-
 
     public async Task AddAsync(IDictionary<Image, Stream> images)
     {
         images = images.Where(x => x.Value.Length != 0).ToDictionary(x => x.Key, x => x.Value);
         await Task.WhenAll(images.Select(UploadImageAsync));
+    }
+
+    public async Task UpdateAsync(Image image)
+    {
+        var query = Queries.Image.Update();
+
+        var dbImage = _mapper.Map<images>(image);
+
+        using var connection = _db.CreateConnection();
+
+        await connection.ExecuteAsync(query, dbImage);
     }
 
     private async Task UploadImageAsync(KeyValuePair<Image, Stream> image)

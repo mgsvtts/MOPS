@@ -59,7 +59,7 @@ public class MerchItemRepository : IMerchItemRepository
 
         using var connection = _db.CreateConnection();
 
-        var item = await connection.QueryFirstOrDefaultAsync<merch_items>(query);
+        var item = await connection.QueryFirstOrDefaultAsync<merch_items>(query, new { id = id.Identity.ToString() });
 
         return _mapper.Map<Domain.MerchItemAggregate.MerchItem>(item);
     }
