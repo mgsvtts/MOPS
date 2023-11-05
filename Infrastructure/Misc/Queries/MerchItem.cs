@@ -32,14 +32,15 @@ public partial class Queries
             {
                 return @$"SELECT m.*, i.{nameof(images.id)}, i.{nameof(images.url)}, i.{nameof(images.is_main)}
                           FROM {nameof(merch_items)} AS m
-                          LEFT JOIN {nameof(images)} i ON i.{nameof(images.merch_item_id)} = m.{nameof(merch_items.id)}";
+                          LEFT JOIN {nameof(images)} i ON i.{nameof(images.merch_item_id)} = m.{nameof(merch_items.id)}
+                          WHERE i.{nameof(images.is_main)} = 1";
             }
             else
             {
                 return @$"SELECT m.*, i.{nameof(images.id)}, i.{nameof(images.url)}, i.{nameof(images.is_main)}
                           FROM {nameof(merch_items)} AS m
                           LEFT JOIN {nameof(images)} i ON i.{nameof(images.merch_item_id)} = m.{nameof(merch_items.id)}
-                          WHERE {nameof(merch_items.amount)} > 0";
+                          WHERE i.{nameof(images.is_main)} = 1 AND {nameof(merch_items.amount)} > 0";
             }
         }
 

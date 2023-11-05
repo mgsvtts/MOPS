@@ -40,7 +40,7 @@ public class OrdersController
     }
 
     [HttpGet("statistic")]
-    public async Task<GetOrderStatisticQueryResponse> GetStatistic(DateTime dateFrom, DateTime dateTo, CancellationToken token)
+    public async Task<GetOrderStatisticQueryResponse> GetStatistic(DateTime? dateFrom, DateTime? dateTo, CancellationToken token)
     {
         return await _sender.Send(new GetOrderStatisticQuery(dateFrom, dateTo), token);
     }
