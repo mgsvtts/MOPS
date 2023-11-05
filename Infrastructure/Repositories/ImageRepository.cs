@@ -1,30 +1,21 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Dapper;
-using Domain.MerchItemAggregate;
 using Domain.MerchItemAggregate.Entities;
 using Domain.MerchItemAggregate.Entities.ValueObjects.Images;
-using Domain.MerchItemAggregate.ValueObjects;
-using Infrastructure;
-using Infrastructure.Misc.Queries;
+using Domain.MerchItemAggregate.Repositories;
 using Infrastructure.Models;
 using MapsterMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Application.Commands.MerchItems.Common.Services;
+namespace Infrastructure.Repositories;
+
 public class ImageRepository : IImageRepository
 {
     private readonly DbContext _db;
     private readonly IMapper _mapper;
     private readonly Cloudinary _cloudinary;
+
     public ImageRepository(IConfiguration config, DbContext db, IMapper mapper)
     {
         var settings = config.GetSection("Cloudinary");
@@ -53,6 +44,34 @@ public class ImageRepository : IImageRepository
         await connection.ExecuteAsync(query, dbImage);
     }
 
+    public async Task DeleteAsync(Image image)
+    {
+        using var connection = _db.CreateConnection();
+
+        var getQuery = Queries.Image.GetById();
+        var deleteQuery = Queries.Image.Delete();
+
+        var dbImage = await connection.QueryFirstOrDefaultAsync<images>(getQuery, new { id = image.Id.Identity.ToString() });
+
+        var result = await _cloudinary.DestroyAsync(new DeletionParams(dbImage.public_id)
+        {
+            ResourceType = ResourceType.Image
+        });
+
+        await connection.ExecuteAsync(deleteQuery, new { id = image.Id.Identity.ToString() });
+    }
+
+    public async Task<Image> GetByIdAsync(ImageId id)
+    {
+        var query = Queries.Image.GetById();
+
+        using var connection = _db.CreateConnection();
+
+        var image = await connection.QueryFirstOrDefaultAsync<images>(query, new { id = id.Identity.ToString() });
+
+        return _mapper.Map<Image>(image);
+    }
+
     private async Task UploadImageAsync(KeyValuePair<Image, Stream> image)
     {
         var result = await _cloudinary.UploadAsync(new ImageUploadParams
@@ -69,7 +88,8 @@ public class ImageRepository : IImageRepository
             ImageId = image.Key.Id.Identity.ToString(),
             ItemId = image.Key.MerchItemId.Identity.ToString(),
             SecureUrl = result.SecureUrl.ToString(),
-            image.Key.IsMain
+            image.Key.IsMain,
+            result.PublicId
         });
     }
 }

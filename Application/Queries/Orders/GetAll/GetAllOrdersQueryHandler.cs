@@ -19,14 +19,7 @@ internal class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, IEn
 
     public async Task<IEnumerable<GetAllOrdersResponseOrder>> Handle(GetAllOrdersQuery request, CancellationToken cancellationToken)
     {
-        var query = $@"SELECT o.{nameof(orders.id)}, o.{nameof(orders.payment_method)}, o.{nameof(orders.created_at)},
-                              i.{nameof(order_items.id)}, i.{nameof(order_items.amount)}, i.{nameof(order_items.price)}, i.{nameof(order_items.self_price)},
-                              m.{nameof(merch_items.id)}, m.{nameof(merch_items.name)},
-                              t.{nameof(types.id)}, t.{nameof(types.name)}
-                       FROM {nameof(orders)} AS o
-                       JOIN {nameof(order_items)} AS i ON o.{nameof(orders.id)} = i.{nameof(order_items.order_id)}
-                       JOIN {nameof(merch_items)} AS m ON i.{nameof(order_items.merch_item_id)} = m.{nameof(merch_items.id)}
-                       JOIN {nameof(types)} AS t ON m.{nameof(merch_items.type_id)} = t.{nameof(types.id)}";
+        var query = Infrastructure.Queries.Order.GetAll();
 
         using var connection = _db.CreateConnection();
 

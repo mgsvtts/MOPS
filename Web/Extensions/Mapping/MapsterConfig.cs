@@ -61,7 +61,7 @@ public static class MapsterConfig
                                                                    new MerchItemPrice(src.self_price),
                                                                    new MerchItemAmount(src.amount),
                                                                    src.created_at,
-                                                                   null));
+                                                                   src.images.Select(x => new Image(new ImageId(Guid.Parse(x.id)), new MerchItemId(Guid.Parse(x.merch_item_id)), x.url, x.is_main))));
 
         TypeAdapterConfig<CreateMerchItemRequest, CreateMerchItemCommand>
          .ForType()
@@ -193,7 +193,7 @@ public static class MapsterConfig
         TypeAdapterConfig<orders, Domain.OrderAggregate.Order>
        .ForType()
        .MapWith(src => new Domain.OrderAggregate.Order(new OrderId(Guid.Parse(src.id)),
-                                                       src.order_items.Select(x=>new OrderItem(new MerchItemId(Guid.Parse(x.merch_item_id)),
+                                                       src.order_items.Select(x => new OrderItem(new MerchItemId(Guid.Parse(x.merch_item_id)),
                                                                                                new MerchItemAmount(x.amount),
                                                                                                new MerchItemPrice(x.price),
                                                                                                new MerchItemPrice(x.self_price))),

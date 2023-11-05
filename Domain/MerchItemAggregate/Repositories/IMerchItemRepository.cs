@@ -6,8 +6,6 @@ public interface IMerchItemRepository
 {
     public Task AddAsync(MerchItem item);
 
-    public Task<List<MerchItem>> GetAllAsync(bool showNotAvailable = true);
-
     public Task<MerchItem?> GetByIdAsync(MerchItemId id);
 
     public Task DeleteAsync(MerchItem id);

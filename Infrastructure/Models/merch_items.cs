@@ -20,5 +20,5 @@ public class merch_items
 
     public DateTime created_at { get; set; }
 
-    public List<images> images { get; set; }
+    public List<images> images { get; set; } = new();
 }

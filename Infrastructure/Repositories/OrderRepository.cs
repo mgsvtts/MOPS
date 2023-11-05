@@ -2,7 +2,6 @@
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Repositories;
 using Domain.OrderAggregate.ValueObjects;
-using Infrastructure.Misc.Queries;
 using Infrastructure.Models;
 using MapsterMapper;
 

@@ -1,7 +1,6 @@
 using Dapper;
 using Domain.TypeAggregate.Repositories;
 using Domain.TypeAggregate.ValueObjects;
-using Infrastructure.Misc.Queries;
 using Infrastructure.Models;
 using MapsterMapper;
 

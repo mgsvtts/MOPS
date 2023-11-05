@@ -1,4 +1,5 @@
-﻿using Contracts.MerchItems;
+﻿using Contracts.Images;
+using Contracts.MerchItems;
 
 namespace Web.Extensions.Mapping.CustomMappers;
 
@@ -23,6 +24,7 @@ public class MerchItemDtoCustomMapper
                                 src.SelfPrice.Value,
                                 src.AmountLeft.Value,
                                 percent,
-                                src.CreatedAt);
+                                src.CreatedAt,
+                                src.Images.Select(x => new ImageDto(x.Id.Identity, x.IsMain, x.Url)));
     }
 }

@@ -8,6 +8,8 @@ namespace Domain.MerchItemAggregate;
 
 public class MerchItem : AggregateRoot<MerchItemId>
 {
+    private readonly List<Image> _images = new();
+
     public TypeId TypeId { get; private set; }
 
     public Name Name { get; private set; }
@@ -22,7 +24,7 @@ public class MerchItem : AggregateRoot<MerchItemId>
 
     public DateTime CreatedAt { get; private set; }
 
-    public IEnumerable<Image> Images { get; private set; }
+    public IReadOnlyList<Image> Images => _images.AsReadOnly();
 
     public MerchItem(MerchItemId id,
                      TypeId typeId,
@@ -42,7 +44,7 @@ public class MerchItem : AggregateRoot<MerchItemId>
         SelfPrice = selfPrice ?? new MerchItemPrice();
         AmountLeft = amountLeft ?? new MerchItemAmount();
         CreatedAt = createdAt ?? DateTime.Now;
-        Images = images ?? Array.Empty<Image>();
+        _images = images is not null ? images.ToList() : new List<Image>();
     }
 
     public MerchItem SubtractAmount(MerchItemAmount amount)

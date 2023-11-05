@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using Domain.MerchItemAggregate.Repositories;
 using Domain.MerchItemAggregate.ValueObjects;
-using Infrastructure.Misc.Queries;
 using Infrastructure.Models;
 using MapsterMapper;
 
@@ -27,17 +26,6 @@ public class MerchItemRepository : IMerchItemRepository
         using var connection = _db.CreateConnection();
 
         await connection.ExecuteAsync(query, dbItem);
-    }
-
-    public async Task<List<Domain.MerchItemAggregate.MerchItem>> GetAllAsync(bool showNotAvailable = true)
-    {
-        var query = Queries.MerchItem.GetAllMerchItems(showNotAvailable);
-
-        using var connection = _db.CreateConnection();
-
-        var items = await connection.QueryAsync<merch_items>(query);
-
-        return _mapper.Map<List<Domain.MerchItemAggregate.MerchItem>>(items);
     }
 
     public async Task<List<Domain.MerchItemAggregate.MerchItem>> GetAllByIdsAsync(IEnumerable<MerchItemId> ids)

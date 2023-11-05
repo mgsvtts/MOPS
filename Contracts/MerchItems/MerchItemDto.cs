@@ -1,4 +1,6 @@
-﻿namespace Contracts.MerchItems;
+﻿using Contracts.Images;
+
+namespace Contracts.MerchItems;
 
 public record struct MerchItemDto(Guid Id,
                                   Guid TypeId,
@@ -8,4 +10,5 @@ public record struct MerchItemDto(Guid Id,
                                   decimal SelfPrice,
                                   int AmountLeft,
                                   string Benefit,
-                                  DateTime CreatedAt);
+                                  DateTime CreatedAt,
+                                  IEnumerable<ImageDto> Images);

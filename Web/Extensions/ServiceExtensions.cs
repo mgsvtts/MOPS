@@ -1,4 +1,3 @@
-using Application.Commands.MerchItems.Common.Services;
 using Domain.MerchItemAggregate.Repositories;
 using Domain.OrderAggregate.Repositories;
 using Domain.TypeAggregate.Repositories;

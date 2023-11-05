@@ -1,17 +1,12 @@
 ﻿using Infrastructure.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Infrastructure.Misc.Queries;
+namespace Infrastructure;
 
-internal partial class Queries
+public partial class Queries
 {
-    internal static class MerchItem
+    public static class MerchItem
     {
-        internal static string AddMerchItem()
+        public static string AddMerchItem()
         {
             return @$"INSERT INTO {nameof(merch_items)} ({nameof(merch_items.id)},
                                                           {nameof(merch_items.type_id)},
@@ -31,29 +26,39 @@ internal partial class Queries
                                @{nameof(merch_items.created_at)})";
         }
 
-        internal static string GetAllMerchItems(bool showNotAvailable)
+        public static string GetAllMerchItems(bool showNotAvailable)
         {
-            return showNotAvailable
-               ? $"SELECT * FROM {nameof(merch_items)}"
-               : $"SELECT * FROM {nameof(merch_items)} WHERE {nameof(merch_items.amount)} > 0";
+            if (showNotAvailable)
+            {
+                return @$"SELECT m.*, i.{nameof(images.id)}, i.{nameof(images.url)}, i.{nameof(images.is_main)}
+                          FROM {nameof(merch_items)} AS m
+                          LEFT JOIN {nameof(images)} i ON i.{nameof(images.merch_item_id)} = m.{nameof(merch_items.id)}";
+            }
+            else
+            {
+                return @$"SELECT m.*, i.{nameof(images.id)}, i.{nameof(images.url)}, i.{nameof(images.is_main)}
+                          FROM {nameof(merch_items)} AS m
+                          LEFT JOIN {nameof(images)} i ON i.{nameof(images.merch_item_id)} = m.{nameof(merch_items.id)}
+                          WHERE {nameof(merch_items.amount)} > 0";
+            }
         }
 
-        internal static string GetAllByIds()
+        public static string GetAllByIds()
         {
             return $"SELECT * FROM {nameof(merch_items)} WHERE {nameof(merch_items.id)} IN @Ids";
         }
 
-        internal static string GetById()
+        public static string GetById()
         {
             return $"SELECT * FROM {nameof(merch_items)} WHERE {nameof(merch_items.id)} = @{nameof(merch_items.id)} LIMIT(1)";
         }
 
-        internal static string Delete()
+        public static string Delete()
         {
             return $"DELETE FROM {nameof(merch_items)} WHERE {nameof(merch_items.id)} = @{nameof(merch_items.id)}";
         }
 
-        internal static string Update()
+        public static string Update()
         {
             return @$"UPDATE {nameof(merch_items)} SET
                     {nameof(merch_items.type_id)} = @{nameof(merch_items.type_id)},
