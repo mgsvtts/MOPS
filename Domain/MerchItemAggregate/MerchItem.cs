@@ -8,7 +8,7 @@ namespace Domain.MerchItemAggregate;
 
 public class MerchItem : AggregateRoot<MerchItemId>
 {
-    private readonly List<Image> _images = new();
+    private List<Image> _images = new();
 
     public TypeId TypeId { get; private set; }
 
@@ -107,6 +107,13 @@ public class MerchItem : AggregateRoot<MerchItemId>
     public MerchItem WithAmount(MerchItemAmount amount)
     {
         AmountLeft = amount;
+
+        return this;
+    }
+
+    public MerchItem WithImages(IEnumerable<Image> images)
+    {
+        _images = images.ToList();
 
         return this;
     }

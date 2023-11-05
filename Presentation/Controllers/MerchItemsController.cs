@@ -1,4 +1,3 @@
-using Application.Commands.MerchItems.AddImage;
 using Application.Commands.MerchItems.Calculate;
 using Application.Commands.MerchItems.Create;
 using Application.Commands.MerchItems.Delete;
@@ -9,6 +8,7 @@ using Contracts.MerchItems;
 using Contracts.MerchItems.Calculate;
 using Contracts.MerchItems.Create;
 using Contracts.MerchItems.Update;
+using Domain.MerchItemAggregate.Entities;
 using Domain.MerchItemAggregate.Entities.ValueObjects.Images;
 using Domain.MerchItemAggregate.Repositories;
 using Domain.MerchItemAggregate.ValueObjects;
@@ -46,6 +46,11 @@ public class MerchItemsController : ControllerBase
     {
         var command = _mapper.Map<CreateMerchItemCommand>(request);
 
+        if (request.Images?.Any() == true)
+        {
+            command = SetImages(request, command);
+        }
+
         var item = await _sender.Send(command, token);
 
         return _mapper.Map<MerchItemDto>(item);
@@ -79,18 +84,23 @@ public class MerchItemsController : ControllerBase
         return NoContent();
     }
 
-    [HttpPost("add-image/{itemId}")]
-    public async Task AddImage([FromRoute] Guid itemId, [FromForm] IEnumerable<Contracts.MerchItems.AddImage.AddImageRequest> images, CancellationToken token)
-    {
-        var command = _mapper.Map<AddImageCommand>((itemId, images));
-        await _sender.Send(command, token);
-    }
-
     [HttpDelete("delete-image/{imageId}")]
     public async Task DeleteImage([FromRoute] Guid imageId, CancellationToken token)
     {
         var command = new DeleteImageCommand(new ImageId(imageId));
 
         await _sender.Send(command, token);
+    }
+
+    private static CreateMerchItemCommand SetImages(CreateMerchItemRequest request, CreateMerchItemCommand command)
+    {
+        command = command with
+        {
+            Images = request.Images!.Select(x => new CreateMerchItemCommandImage(new Image(new ImageId(),
+                                                                                           new MerchItemId(),
+                                                                                           isMain: x.IsMain),
+                                                                                 x.File.OpenReadStream())).ToList()
+        };
+        return command;
     }
 }

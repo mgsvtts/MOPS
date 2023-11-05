@@ -29,7 +29,6 @@ public class ImageRepository : IImageRepository
 
     public async Task AddAsync(IDictionary<Image, Stream> images)
     {
-        images = images.Where(x => x.Value.Length != 0).ToDictionary(x => x.Key, x => x.Value);
         await Task.WhenAll(images.Select(UploadImageAsync));
     }
 

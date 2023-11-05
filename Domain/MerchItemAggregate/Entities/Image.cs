@@ -25,4 +25,11 @@ public class Image : Entity<ImageId>
 
         return this;
     }
+
+    public Image WithItemId(MerchItemId itemId)
+    {
+        MerchItemId = itemId;
+
+        return this;
+    }
 }
