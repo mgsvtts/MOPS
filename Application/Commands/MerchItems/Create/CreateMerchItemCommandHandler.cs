@@ -27,11 +27,11 @@ internal class CreateMerchItemCommandHandler : IRequestHandler<CreateMerchItemCo
         {
             throw new InvalidOperationException("Some broken images found");
         }
-        if (request.Images.Select(x => x.Value.IsMain).Count() > 1)
+        if (request.Images.Where(x => x.Value.IsMain == true).Count() != 1)
         {
-            throw new InvalidOperationException("Only one main image allowed");
+            throw new InvalidOperationException("Exaclty one main image allowed");
         }
-        if (!request.Images.Select(x => x.Value.IsMain).Any())
+        if (!request.Images.Where(x => x.Value.IsMain == true).Any())
         {
             throw new InvalidOperationException("Set a default image");
         }

@@ -6,6 +6,7 @@ using Application.Commands.Types.Create;
 using Application.Commands.Types.Update;
 using Application.Queries.Orders.GetAll;
 using Application.Queries.Orders.Statistics;
+using Contracts.Images;
 using Contracts.MerchItems;
 using Contracts.MerchItems.Calculate;
 using Contracts.MerchItems.Create;
@@ -24,7 +25,6 @@ using Infrastructure.Models;
 using Mapster;
 using MapsterMapper;
 using System.Reflection;
-using Web.Extensions.Mapping.CustomMappers;
 
 namespace Web.Extensions.Mapping;
 
@@ -34,7 +34,16 @@ public static class MapsterConfig
     {
         TypeAdapterConfig<Domain.MerchItemAggregate.MerchItem, MerchItemDto>
            .ForType()
-           .MapWith(src => MerchItemDtoCustomMapper.Map(src));
+           .MapWith(src => new MerchItemDto(src.Id.Identity,
+                                src.TypeId.Identity,
+                                src.Name.Value,
+                                src.Description.Value.Value,
+                                src.Price.Value,
+                                src.SelfPrice.Value,
+                                src.AmountLeft.Value,
+                                src.GetBenefitPercent(),
+                                src.CreatedAt,
+                                src.Images.Select(x => new ImageDto(x.Id.Identity, x.IsMain, x.Url))));
 
         TypeAdapterConfig<Domain.MerchItemAggregate.MerchItem, merch_items>
            .ForType()
@@ -43,7 +52,7 @@ public static class MapsterConfig
                id = src.Id.Identity.ToString(),
                type_id = src.TypeId.Identity.ToString(),
                name = src.Name.Value,
-               description = src.Description != null ? src.Description.Value.ToString() : null,
+               description = src.Description != null ? src.Description.Value.Value.ToString() : null,
                price = src.Price.Value,
                self_price = src.SelfPrice.Value,
                amount = src.AmountLeft.Value,

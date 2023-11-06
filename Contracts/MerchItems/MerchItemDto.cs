@@ -9,6 +9,6 @@ public record struct MerchItemDto(Guid Id,
                                   decimal Price,
                                   decimal SelfPrice,
                                   int AmountLeft,
-                                  string Benefit,
+                                  float Benefit,
                                   DateTime CreatedAt,
                                   IEnumerable<ImageDto> Images);

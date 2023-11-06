@@ -24,13 +24,11 @@ public class MerchItemsController : ControllerBase
 {
     private readonly ISender _sender;
     private readonly IMapper _mapper;
-    private readonly IImageRepository _imageRepo;
 
-    public MerchItemsController(ISender sender, IMapper mapper, IImageRepository imageRepo)
+    public MerchItemsController(ISender sender, IMapper mapper)
     {
         _sender = sender;
         _mapper = mapper;
-        _imageRepo = imageRepo;
     }
 
     [HttpGet]

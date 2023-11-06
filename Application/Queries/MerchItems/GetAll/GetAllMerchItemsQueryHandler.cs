@@ -13,7 +13,7 @@ internal sealed class GetAllMerchItemsQueryHandler : IRequestHandler<GetAllMerch
     private readonly IMapper _mapper;
     private readonly DbContext _db;
 
-    public GetAllMerchItemsQueryHandler(IMerchItemRepository repository, DbContext db, IMapper mapper)
+    public GetAllMerchItemsQueryHandler(DbContext db, IMapper mapper)
     {
         _db = db;
         _mapper = mapper;
