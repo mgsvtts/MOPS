@@ -21,7 +21,7 @@ internal sealed class GetAllMerchItemsQueryHandler : IRequestHandler<GetAllMerch
 
     public async Task<List<MerchItem>> Handle(GetAllMerchItemsQuery request, CancellationToken cancellationToken)
     {
-        var query = Infrastructure.Queries.MerchItem.GetAllMerchItems(request.ShowNotAvailable);
+        var query = Infrastructure.Queries.MerchItem.GetAllMerchItems(request.ShowNotAvailable, request.Sort);
 
         using var connection = _db.CreateConnection();
 

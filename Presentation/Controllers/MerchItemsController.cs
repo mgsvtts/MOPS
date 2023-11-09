@@ -7,6 +7,7 @@ using Application.Queries.MerchItems.GetAll;
 using Contracts.MerchItems;
 using Contracts.MerchItems.Calculate;
 using Contracts.MerchItems.Create;
+using Contracts.MerchItems.GetAllMerchItems;
 using Contracts.MerchItems.Update;
 using Domain.MerchItemAggregate.Entities;
 using Domain.MerchItemAggregate.Entities.ValueObjects.Images;
@@ -32,9 +33,11 @@ public class MerchItemsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IEnumerable<MerchItemDto>> GetAll(bool showNotAvailable = true, CancellationToken token = default)
+    public async Task<IEnumerable<MerchItemDto>> GetAll([FromQuery] GetAllMerchItemsRequest request, CancellationToken token = default)
     {
-        var result = await _sender.Send(new GetAllMerchItemsQuery(showNotAvailable), token);
+        var query = _mapper.Map<GetAllMerchItemsQuery>(request);
+        
+        var result = await _sender.Send(query, token);
 
         return _mapper.Map<IEnumerable<MerchItemDto>>(result);
     }
