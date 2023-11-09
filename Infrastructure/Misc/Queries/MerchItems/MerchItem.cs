@@ -31,9 +31,8 @@ public partial class Queries
         {
             var query = @$"SELECT m.*, i.{nameof(images.id)}, i.{nameof(images.url)}, i.{nameof(images.is_main)}
                           FROM {nameof(merch_items)} AS m
-                          LEFT JOIN {nameof(images)} i ON i.{nameof(images.merch_item_id)} = m.{nameof(merch_items.id)}
-                          WHERE i.{nameof(images.is_main)} = 1 ";
-            
+                          LEFT JOIN {nameof(images)} i ON i.{nameof(images.merch_item_id)} = m.{nameof(merch_items.id)} ";
+
             if (!showNotAvailable)
             {
                 query += $"AND {nameof(merch_items.amount)} > 0 ";
@@ -71,7 +70,8 @@ public partial class Queries
                      WHERE {nameof(merch_items.id)} = @{nameof(merch_items.id)}";
         }
 
-        private static string AddSorting(MerchItemSort sort){
+        private static string AddSorting(MerchItemSort sort)
+        {
             return sort switch
             {
                 MerchItemSort.NameAsc => $"ORDER BY {nameof(merch_items.name)}",
@@ -88,7 +88,6 @@ public partial class Queries
                 MerchItemSort.SelfPriceDesc => $"ORDER BY {nameof(merch_items.self_price)} DESC",
                 _ => throw new NotImplementedException(),
             };
-
         }
     }
 }

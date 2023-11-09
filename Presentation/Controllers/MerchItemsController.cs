@@ -11,7 +11,6 @@ using Contracts.MerchItems.GetAllMerchItems;
 using Contracts.MerchItems.Update;
 using Domain.MerchItemAggregate.Entities;
 using Domain.MerchItemAggregate.Entities.ValueObjects.Images;
-using Domain.MerchItemAggregate.Repositories;
 using Domain.MerchItemAggregate.ValueObjects;
 using MapsterMapper;
 using MediatR;
@@ -36,7 +35,7 @@ public class MerchItemsController : ControllerBase
     public async Task<IEnumerable<MerchItemDto>> GetAll([FromQuery] GetAllMerchItemsRequest request, CancellationToken token = default)
     {
         var query = _mapper.Map<GetAllMerchItemsQuery>(request);
-        
+
         var result = await _sender.Send(query, token);
 
         return _mapper.Map<IEnumerable<MerchItemDto>>(result);

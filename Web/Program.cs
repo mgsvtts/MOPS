@@ -1,7 +1,4 @@
-using Infrastructure;
-using Presentation.Controllers;
 using Web.Extensions;
-using Web.Extensions.Mapping;
 
 namespace Web;
 
@@ -19,7 +16,7 @@ public class Program
         var app = builder.Build();
 
         app.AddMiddlewares();
-       
+
         app.Run();
     }
 }

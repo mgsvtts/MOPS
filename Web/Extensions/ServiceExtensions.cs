@@ -1,4 +1,3 @@
-using CloudinaryDotNet;
 using Domain.MerchItemAggregate.Repositories;
 using Domain.OrderAggregate.Repositories;
 using Domain.TypeAggregate.Repositories;
@@ -24,7 +23,6 @@ public static class ServiceExtensions
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
         services.AddSingleton<DbContext>();
-
 
         return services;
     }

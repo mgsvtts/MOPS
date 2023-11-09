@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using Domain.MerchItemAggregate;
-using Domain.MerchItemAggregate.Repositories;
 using Infrastructure;
 using Infrastructure.Models;
 using MapsterMapper;
