@@ -1,6 +1,5 @@
 ﻿using Domain.MerchItemAggregate;
 using Domain.MerchItemAggregate.Repositories;
-using Infrastructure.Repositories;
 using MapsterMapper;
 using MediatR;
 

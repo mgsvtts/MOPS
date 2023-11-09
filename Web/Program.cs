@@ -1,7 +1,4 @@
-using Infrastructure;
-using Presentation.Controllers;
 using Web.Extensions;
-using Web.Extensions.Mapping;
 
 namespace Web;
 
@@ -11,37 +8,14 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddControllers().AddApplicationPart(typeof(MerchItemsController).Assembly);
-
-        builder.Services.AddCors();
-        builder.Services.AddControllers();
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-
-        builder.Services.AddSingleton<DbContext>();
-
-        builder.Services.RegisterMapsterConfiguration();
-        builder.Services.AddMediatR(config => config.RegisterServicesFromAssemblies(typeof(Application.Common.AssemblyReference).Assembly));
-
-        builder.Services.AddInfrastructure();
+        builder.Services.AddDomain()
+                        .AddApplication()
+                        .AddInfrastructure()
+                        .AddPresentation();
 
         var app = builder.Build();
 
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
-
-        app.UseCors(builder => builder.AllowAnyOrigin()
-                                      .AllowAnyMethod()
-                                      .AllowAnyHeader());
-
-        app.UseHttpsRedirection();
-
-        app.UseAuthorization();
-
-        app.MapControllers();
+        app.AddMiddlewares();
 
         app.Run();
     }

@@ -4,12 +4,14 @@ using Application.Commands.MerchItems.Update;
 using Application.Commands.Orders.Create;
 using Application.Commands.Types.Create;
 using Application.Commands.Types.Update;
+using Application.Queries.MerchItems.GetAll;
 using Application.Queries.Orders.GetAll;
 using Application.Queries.Orders.Statistics;
 using Contracts.Images;
 using Contracts.MerchItems;
 using Contracts.MerchItems.Calculate;
 using Contracts.MerchItems.Create;
+using Contracts.MerchItems.GetAllMerchItems;
 using Contracts.MerchItems.Update;
 using Contracts.Orders.Create;
 using Contracts.Types;
@@ -33,31 +35,31 @@ public static class MapsterConfig
     public static void RegisterMapsterConfiguration(this IServiceCollection services)
     {
         TypeAdapterConfig<Domain.MerchItemAggregate.MerchItem, MerchItemDto>
-           .ForType()
-           .MapWith(src => new MerchItemDto(src.Id.Identity,
-                                src.TypeId.Identity,
-                                src.Name.Value,
-                                src.Description.Value.Value,
-                                src.Price.Value,
-                                src.SelfPrice.Value,
-                                src.AmountLeft.Value,
-                                src.GetBenefitPercent(),
-                                src.CreatedAt,
-                                src.Images.Select(x => new ImageDto(x.Id.Identity, x.IsMain, x.Url))));
+               .ForType()
+               .MapWith(src => new MerchItemDto(src.Id.Identity,
+                                    src.TypeId.Identity,
+                                    src.Name.Value,
+                                    src.Description.Value.Value,
+                                    src.Price.Value,
+                                    src.SelfPrice.Value,
+                                    src.AmountLeft.Value,
+                                    src.GetBenefitPercent(),
+                                    src.CreatedAt,
+                                    src.Images.Select(x => new ImageDto(x.Id.Identity, x.IsMain, x.Url))));
 
         TypeAdapterConfig<Domain.MerchItemAggregate.MerchItem, merch_items>
-           .ForType()
-           .MapWith(src => new merch_items
-           {
-               id = src.Id.Identity.ToString(),
-               type_id = src.TypeId.Identity.ToString(),
-               name = src.Name.Value,
-               description = src.Description != null ? src.Description.Value.Value.ToString() : null,
-               price = src.Price.Value,
-               self_price = src.SelfPrice.Value,
-               amount = src.AmountLeft.Value,
-               created_at = src.CreatedAt
-           });
+       .ForType()
+       .MapWith(src => new merch_items
+       {
+           id = src.Id.Identity.ToString(),
+           type_id = src.TypeId.Identity.ToString(),
+           name = src.Name.Value,
+           description = src.Description != null ? src.Description.Value.ToString() : null,
+           price = src.Price.Value,
+           self_price = src.SelfPrice.Value,
+           amount = src.AmountLeft.Value,
+           created_at = src.CreatedAt
+       });
 
         TypeAdapterConfig<merch_items, Domain.MerchItemAggregate.MerchItem>
            .ForType()
@@ -81,15 +83,19 @@ public static class MapsterConfig
                                                     new MerchItemAmount(src.AmountLeft),
                                                     null));
 
-        TypeAdapterConfig<UpdateMerchItemRequest, UpdateMerchItemCommand>
+        TypeAdapterConfig<GetAllMerchItemsRequest, GetAllMerchItemsQuery>
         .ForType()
-        .MapWith(src => new UpdateMerchItemCommand(new MerchItemId(src.Id),
-                                                   src.TypeId != null ? new TypeId(src.TypeId) : null,
-                                                   !string.IsNullOrEmpty(src.Name) ? new Name(src.Name) : null,
-                                                   src.Description != null ? new Description(src.Description) : null,
-                                                   src.Price != null ? new MerchItemPrice(src.Price.Value) : null,
-                                                   src.SelfPrice != null ? new MerchItemPrice(src.SelfPrice.Value) : null,
-                                                   src.AmountLeft != null ? new MerchItemAmount(src.AmountLeft.Value) : null));
+        .MapWith(src => new GetAllMerchItemsQuery(src.ShowNotAvailable, (Infrastructure.Misc.Queries.MerchItems.MerchItemSort)(int)src.Sort));
+
+        TypeAdapterConfig<UpdateMerchItemRequest, UpdateMerchItemCommand>
+            .ForType()
+            .MapWith(src => new UpdateMerchItemCommand(new MerchItemId(src.Id),
+                                                       src.TypeId != null ? new TypeId(src.TypeId) : null,
+                                                       !string.IsNullOrEmpty(src.Name) ? new Name(src.Name) : null,
+                                                       src.Description != null ? new Description(src.Description) : null,
+                                                       src.Price != null ? new MerchItemPrice(src.Price.Value) : null,
+                                                       src.SelfPrice != null ? new MerchItemPrice(src.SelfPrice.Value) : null,
+                                                       src.AmountLeft != null ? new MerchItemAmount(src.AmountLeft.Value) : null));
 
         TypeAdapterConfig<CreateMerchItemCommand, Domain.MerchItemAggregate.MerchItem>
          .ForType()
