@@ -34,11 +34,20 @@ public static class MapsterConfig
 {
   public static void RegisterMapsterConfiguration(this IServiceCollection services)
   {
-    TypeAdapterConfig<Domain.MerchItemAggregate.MerchItem, MerchItemDto>
-       .ForType()
-       .MapWith(src => MerchItemDtoCustomMapper.Map(src));
+        TypeAdapterConfig<Domain.MerchItemAggregate.MerchItem, MerchItemDto>
+               .ForType()
+               .MapWith(src => new MerchItemDto(src.Id.Identity,
+                                    src.TypeId.Identity,
+                                    src.Name.Value,
+                                    src.Description.Value.Value,
+                                    src.Price.Value,
+                                    src.SelfPrice.Value,
+                                    src.AmountLeft.Value,
+                                    src.GetBenefitPercent(),
+                                    src.CreatedAt,
+                                    src.Images.Select(x => new ImageDto(x.Id.Identity, x.IsMain, x.Url))));
 
-    TypeAdapterConfig<Domain.MerchItemAggregate.MerchItem, merch_items>
+        TypeAdapterConfig<Domain.MerchItemAggregate.MerchItem, merch_items>
        .ForType()
        .MapWith(src => new merch_items
        {
