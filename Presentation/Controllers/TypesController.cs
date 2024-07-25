@@ -53,7 +53,7 @@ public class TypesController : ControllerBase
         return _mapper.Map<TypeDto>(type);
     }
 
-    [HttpDelete("{typeId}")]
+    [HttpDelete("{typeId:guid}")]
     public async Task<IActionResult> Delete([FromRoute] Guid typeId, CancellationToken token)
     {
         await _sender.Send(new DeleteTypeCommand(new TypeId(typeId)), token);

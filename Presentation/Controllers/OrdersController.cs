@@ -24,7 +24,7 @@ public class OrdersController
     }
 
     [HttpGet]
-    public async Task<object> GetAll(CancellationToken token)
+    public async Task<IEnumerable<GetAllOrdersResponseOrder>> GetAll(CancellationToken token)
     {
         return await _sender.Send(new GetAllOrdersQuery(), token);
     }
@@ -45,7 +45,7 @@ public class OrdersController
         return await _sender.Send(new GetOrderStatisticQuery(dateFrom, dateTo), token);
     }
 
-    [HttpDelete("{orderId}")]
+    [HttpDelete("{orderId:guid}")]
     public async Task Delete([FromRoute] Guid orderId, CancellationToken token)
     {
         var command = new DeleteOrderCommand(new OrderId(orderId));

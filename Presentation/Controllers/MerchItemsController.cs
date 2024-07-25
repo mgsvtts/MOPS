@@ -76,7 +76,7 @@ public class MerchItemsController : ControllerBase
         return _mapper.Map<MerchItemDto>(result);
     }
 
-    [HttpDelete("{itemId}")]
+    [HttpDelete("{itemId:guid}")]
     public async Task<IActionResult> Delete([FromRoute] Guid itemId, CancellationToken token)
     {
         await _sender.Send(new DeleteMerchItemCommand(new MerchItemId(itemId)), token);
@@ -84,7 +84,7 @@ public class MerchItemsController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("delete-image/{imageId}")]
+    [HttpDelete("delete-image/{imageId:guid}")]
     public async Task DeleteImage([FromRoute] Guid imageId, CancellationToken token)
     {
         var command = new DeleteImageCommand(new ImageId(imageId));
