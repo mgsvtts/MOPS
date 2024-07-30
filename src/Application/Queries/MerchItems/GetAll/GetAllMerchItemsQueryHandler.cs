@@ -1,9 +1,5 @@
-﻿using Domain.MerchItemAggregate;
-using Infrastructure;
-using Infrastructure.Common;
-using Infrastructure.Models;
+﻿using Infrastructure.Common;
 using LinqToDB;
-using MapsterMapper;
 using Mediator;
 using MerchItem = Infrastructure.Models.MerchItem;
 

@@ -4,7 +4,6 @@ using Infrastructure.Common;
 using Infrastructure.Models;
 using LinqToDB;
 using Mapster;
-using MapsterMapper;
 
 namespace Infrastructure.Repositories;
 
@@ -39,13 +38,13 @@ public sealed class MerchItemRepository : IMerchItemRepository
         return item.Adapt<Domain.MerchItemAggregate.MerchItem>();
     }
 
-    public async Task DeleteAsync(Domain.MerchItemAggregate.MerchItem item)
+    public async Task DeleteAsync(Domain.MerchItemAggregate.MerchItem item, CancellationToken token)
     {
         using var db = new DbConnection();
 
         await db.MerchItems
             .Where(x => x.Id == item.Id.Identity)
-            .DeleteAsync();
+            .DeleteAsync(token);
     }
 
     public async Task UpdateAsync(Domain.MerchItemAggregate.MerchItem item, CancellationToken token)

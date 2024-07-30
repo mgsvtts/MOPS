@@ -1,13 +1,10 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
-using Domain.MerchItemAggregate.Entities;
 using Domain.MerchItemAggregate.Entities.ValueObjects.Images;
 using Domain.MerchItemAggregate.Repositories;
 using Infrastructure.Common;
-using Infrastructure.Models;
 using LinqToDB;
 using Mapster;
-using MapsterMapper;
 using Image = Domain.MerchItemAggregate.Entities.Image;
 
 namespace Infrastructure.Repositories;
@@ -16,7 +13,7 @@ public sealed class ImageRepository(Cloudinary _cloudinary) : IImageRepository
 {
     public async Task AddAsync(IDictionary<Image, Stream> images, CancellationToken token)
     {
-        await Task.WhenAll(images.Select(x=>UploadImageAsync(x, token)));
+        await Task.WhenAll(images.Select(x => UploadImageAsync(x, token)));
     }
 
     public async Task DeleteAsync(Image image, CancellationToken token)

@@ -2,14 +2,10 @@
 using LinqToDB;
 using LinqToDB.Data;
 using LinqToDB.DataProvider.PostgreSQL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Type = Infrastructure.Models.Type;
 
 namespace Infrastructure.Common;
+
 public sealed class DbConnection : DataConnection
 {
     public ITable<Image> Images => this.GetTable<Image>();

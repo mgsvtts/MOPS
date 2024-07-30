@@ -15,4 +15,7 @@ public sealed class Order
 
     [Column("payment_method")]
     public PaymentMethod PaymentMethod { get; set; }
+
+    [Association(ThisKey = nameof(Id), OtherKey = nameof(Models.OrderItem.OrderId))]
+    public List<OrderItem> OrderItems { get; set; } = [];
 }

@@ -1,25 +1,23 @@
 using Domain.TypeAggregate.Repositories;
-using MapsterMapper;
+using Mapster;
 using Mediator;
 
 namespace Application.Commands.Types.Create;
 
 public sealed class CreateTypeCommandHandler : ICommandHandler<CreateTypeCommand, Domain.TypeAggregate.Type>
 {
-    private readonly IMapper _mapper;
     private readonly ITypeRepository _typeRepository;
 
-    public CreateTypeCommandHandler(ITypeRepository typeRepository, IMapper mapper)
+    public CreateTypeCommandHandler(ITypeRepository typeRepository)
     {
         _typeRepository = typeRepository;
-        _mapper = mapper;
     }
 
     public async ValueTask<Domain.TypeAggregate.Type> Handle(CreateTypeCommand request, CancellationToken cancellationToken)
     {
-        var type = _mapper.Map<Domain.TypeAggregate.Type>(request);
+        var type = request.Adapt<Domain.TypeAggregate.Type>();
 
-        await _typeRepository.AddAsync(type);
+        await _typeRepository.AddAsync(type, cancellationToken);
 
         return type;
     }

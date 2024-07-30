@@ -23,4 +23,10 @@ public sealed class OrderItem
 
     [Column("self_price")]
     public decimal SelfPrice { get; set; }
+
+    [Association(ThisKey = nameof(MerchItemId), OtherKey = nameof(Models.MerchItem.Id))]
+    public MerchItem MerchItem { get; set; } = null!;
+
+    [Association(ThisKey = nameof(OrderId), OtherKey = nameof(Models.Order.Id))]
+    public Order Order { get; set; } = null!;
 }

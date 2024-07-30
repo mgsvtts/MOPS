@@ -1,10 +1,8 @@
 using Domain.TypeAggregate.Repositories;
 using Domain.TypeAggregate.ValueObjects;
 using Infrastructure.Common;
-using Infrastructure.Models;
 using LinqToDB;
 using Mapster;
-using MapsterMapper;
 using Type = Infrastructure.Models.Type;
 
 namespace Infrastructure.Repositories;

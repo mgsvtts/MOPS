@@ -16,11 +16,11 @@ public sealed class DeleteMerchItemCommandHandler : ICommandHandler<DeleteMerchI
 
     public async ValueTask<Unit> Handle(DeleteMerchItemCommand request, CancellationToken cancellationToken)
     {
-        var item = await _merchRepository.GetByIdAsync(request.Id)
+        var item = await _merchRepository.GetByIdAsync(request.Id, cancellationToken)
                    ?? throw new InvalidOperationException($"Cannot find merch item with id {request.Id.Identity}");
 
-        await Task.WhenAll(item.Images.Select(_imageRepository.DeleteAsync));
-        await _merchRepository.DeleteAsync(item);
+        await Task.WhenAll(item.Images.Select(x => _imageRepository.DeleteAsync(x, cancellationToken)));
+        await _merchRepository.DeleteAsync(item, cancellationToken);
 
         return Unit.Value;
     }

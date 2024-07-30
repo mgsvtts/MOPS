@@ -14,10 +14,10 @@ public sealed class DeleteTypeCommandHandler : ICommandHandler<DeleteTypeCommand
 
     public async ValueTask<Unit> Handle(DeleteTypeCommand request, CancellationToken cancellationToken)
     {
-        var type = await _typeRepository.GetByIdAsync(request.Id)
+        var type = await _typeRepository.GetByIdAsync(request.Id, cancellationToken)
                    ?? throw new InvalidOperationException($"Cannot find type with id {request.Id.Identity}");
 
-        await _typeRepository.DeleteAsync(type);
+        await _typeRepository.DeleteAsync(type, cancellationToken);
 
         return Unit.Value;
     }

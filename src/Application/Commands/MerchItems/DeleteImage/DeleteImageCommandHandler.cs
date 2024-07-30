@@ -14,7 +14,7 @@ public sealed class DeleteImageCommandHandler : ICommandHandler<DeleteImageComma
 
     public async ValueTask<Unit> Handle(DeleteImageCommand request, CancellationToken cancellationToken)
     {
-        var image = await _imageRepository.GetByIdAsync(request.Id)
+        var image = await _imageRepository.GetByIdAsync(request.Id, cancellationToken)
             ?? throw new InvalidOperationException($"Cannot find image with id {request.Id.Identity}");
 
         if (image.IsMain)
@@ -22,7 +22,7 @@ public sealed class DeleteImageCommandHandler : ICommandHandler<DeleteImageComma
             throw new InvalidOperationException("Cannot delete main image");
         }
 
-        await _imageRepository.DeleteAsync(image);
+        await _imageRepository.DeleteAsync(image, cancellationToken);
 
         return Unit.Value;
     }

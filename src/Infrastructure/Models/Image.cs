@@ -13,7 +13,7 @@ public sealed class Image
     public Guid MerchItemId { get; set; }
 
     [Column("url")]
-    public string Url { get; set; } = null!;
+    public string? Url { get; set; }
 
     [Column("public_id")]
     public string PublicId { get; set; } = null!;

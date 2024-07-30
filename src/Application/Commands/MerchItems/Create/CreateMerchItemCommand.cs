@@ -12,6 +12,6 @@ public sealed record CreateMerchItemCommand(TypeId TypeId,
                                             MerchItemPrice Price,
                                             MerchItemPrice SelfPrice,
                                             MerchItemAmount AmountLeft,
-                                            List<CreateMerchItemCommandImage> Images) : ICommand<MerchItem>;
+                                            List<CreateMerchItemCommandImage>? Images) : ICommand<MerchItem>;
 
 public readonly record struct CreateMerchItemCommandImage(Image Value, Stream ImageStream);

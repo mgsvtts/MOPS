@@ -1,9 +1,14 @@
 using Domain.MerchItemAggregate.Repositories;
 using Domain.OrderAggregate.Repositories;
 using Domain.TypeAggregate.Repositories;
-using Infrastructure;
+using FastEndpoints;
+using FastEndpoints.Swagger;
+using HealthChecks.UI.Client;
+using Hellang.Middleware.ProblemDetails;
+using Infrastructure.Common;
 using Infrastructure.Repositories;
-using Presentation.Controllers.MerchItems;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using System.Net;
 using Web.Extensions.Mapping;
 
 namespace Web.Extensions;
@@ -22,7 +27,7 @@ public static class ServiceExtensions
 
     public static WebApplicationBuilder AddInfrastructure(this WebApplicationBuilder builder)
     {
-        builder.Services.AddSingleton<DbContext>();
+        DbConnection.Bind(builder.Configuration.GetConnectionString("DefaultConnection")!);
 
         return builder;
     }
@@ -38,31 +43,53 @@ public static class ServiceExtensions
 
     public static WebApplicationBuilder AddPresentation(this WebApplicationBuilder builder)
     {
-        builder.Services.AddControllers().AddApplicationPart(typeof(MerchItemsController).Assembly);
+        ProblemDetailsExtensions.AddProblemDetails(builder.Services, x =>
+        {
+            x.IncludeExceptionDetails = (_, _) => builder.Environment.IsDevelopment();
+        });
 
         builder.Services.AddCors();
-        builder.Services.AddControllers();
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+
+        builder.Services.AddFastEndpoints();
+
+        builder.Services.SwaggerDocument(x =>
+        {
+            x.AutoTagPathSegmentIndex = 0;
+        });
+
+        builder.Services.AddHealthChecks()
+           .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection")!);
 
         return builder;
     }
 
     public static WebApplication AddMiddlewares(this WebApplication app)
     {
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
+        app.UseProblemDetails();
 
         app.UseCors(builder => builder.AllowAnyOrigin()
                                       .AllowAnyMethod()
-        .AllowAnyHeader());
+                                      .AllowAnyHeader());
 
-        app.UseHttpsRedirection();
-        app.UseAuthorization();
-        app.MapControllers();
+        app.MapHealthChecks("/api/accounts/health", new HealthCheckOptions
+        {
+            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+        });
+
+        app.UseFastEndpoints(x =>
+        {
+            x.Endpoints.RoutePrefix = "api";
+            x.Endpoints.Configurator = config =>
+            {
+                config.AllowAnonymous();
+                config.Description(b => b.Produces<Microsoft.AspNetCore.Mvc.ProblemDetails>((int)HttpStatusCode.BadRequest, "application/problem+json"));
+            };
+        });
+
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwaggerUI();
+        }
 
         return app;
     }

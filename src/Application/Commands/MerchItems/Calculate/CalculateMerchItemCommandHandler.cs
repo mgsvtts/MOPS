@@ -15,7 +15,7 @@ public sealed class CalculateMerchItemCommandHandler : ICommandHandler<Calculate
 
     public async ValueTask<CalculateMerchItemResponse> Handle(CalculateMerchItemCommand request, CancellationToken cancellationToken)
     {
-        var items = await _repository.GetAllByIdsAsync(request.Items.Select(x => x.ItemId));
+        var items = await _repository.GetAllByIdsAsync(request.Items.Select(x => x.ItemId), cancellationToken);
 
         var itemsWithAmount = BindItemsWithAmount(request, items);
 

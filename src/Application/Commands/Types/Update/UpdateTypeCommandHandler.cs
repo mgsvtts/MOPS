@@ -1,5 +1,5 @@
 using Domain.TypeAggregate.Repositories;
-using MapsterMapper;
+using Mapster;
 using Mediator;
 
 namespace Application.Commands.Types.Update;
@@ -7,19 +7,17 @@ namespace Application.Commands.Types.Update;
 public sealed class UpdateTypeCommandHandler : ICommandHandler<UpdateTypeCommand, Domain.TypeAggregate.Type>
 {
     private readonly ITypeRepository _typeRepository;
-    private readonly IMapper _mapper;
 
-    public UpdateTypeCommandHandler(ITypeRepository typeRepository, IMapper mapper)
+    public UpdateTypeCommandHandler(ITypeRepository typeRepository)
     {
         _typeRepository = typeRepository;
-        _mapper = mapper;
     }
 
     public async ValueTask<Domain.TypeAggregate.Type> Handle(UpdateTypeCommand request, CancellationToken cancellationToken)
     {
-        var type = _mapper.Map<Domain.TypeAggregate.Type>(request);
+        var type = request.Adapt<Domain.TypeAggregate.Type>();
 
-        await _typeRepository.UpdateAsync(type);
+        await _typeRepository.UpdateAsync(type, cancellationToken);
 
         return type;
     }
