@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Models;
 
-[Column("type")]
+[Table("types")]
 public sealed class Type
 {
     [PrimaryKey]

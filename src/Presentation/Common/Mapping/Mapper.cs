@@ -67,17 +67,17 @@ public sealed class Mapper : IRegister
          .ForType()
          .MapWith(src => new CreateTypeCommand(new Name(src.Name)));
 
-        TypeAdapterConfig<IEnumerable<CalculateItemRequest>, CalculateMerchItemCommand>
+        TypeAdapterConfig<IEnumerable<Endpoints.MerchItems.Post.Calculate.CalculateMerchItemRequest>, CalculateMerchItemCommand>
          .ForType()
-         .MapWith(src => new CalculateMerchItemCommand(src.Select(x => new CalculateMerchItemRequest(new MerchItemId(x.ItemId), x.Amount))));
+         .MapWith(src => new CalculateMerchItemCommand(src.Select(x => new Application.Commands.MerchItems.Calculate.CalculateMerchItemRequest(new MerchItemId(x.ItemId), x.Amount))));
 
         TypeAdapterConfig<UpdateTypeRequest, UpdateTypeCommand>
         .ForType()
         .MapWith(src => new UpdateTypeCommand(new TypeId(src.Id), new Name(src.Name)));
 
-        TypeAdapterConfig<CalculateMerchItemResponse, CalculateItemResponse>
+        TypeAdapterConfig<Application.Commands.MerchItems.Calculate.CalculateMerchItemResponse, Endpoints.MerchItems.Post.Calculate.CalculateMerchItemResponse>
             .ForType()
-            .MapWith(src => new CalculateItemResponse(src.TotalPrice));
+            .MapWith(src => new Endpoints.MerchItems.Post.Calculate.CalculateMerchItemResponse(src.TotalPrice));
 
         TypeAdapterConfig<CreateOrderRequest, CreateOrderCommand>
         .ForType()

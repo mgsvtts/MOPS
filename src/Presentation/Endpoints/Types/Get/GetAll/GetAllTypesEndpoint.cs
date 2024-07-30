@@ -2,6 +2,7 @@
 using FastEndpoints;
 using Mapster;
 using Mediator;
+using Microsoft.AspNetCore.Http;
 using Presentation.Endpoints.Types.Common;
 
 namespace Presentation.Endpoints.Types.Get.GetAll;
@@ -11,6 +12,7 @@ public sealed class GetAllTypesEndpoint(ISender _sender) : EndpointWithoutReques
     public override void Configure()
     {
         Get("api/types");
+        Options(x => x.WithTags("Types"));
     }
 
     public override async Task HandleAsync(CancellationToken token)

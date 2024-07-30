@@ -20,4 +20,7 @@ public sealed class Image
 
     [Column("is_main")]
     public bool IsMain { get; set; }
+
+    [Column("created_at")]
+    public DateTime CreatedAt { get; set; }
 }

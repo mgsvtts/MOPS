@@ -1,6 +1,7 @@
 ﻿using Application.Queries.Orders.Statistics;
 using FastEndpoints;
 using Mediator;
+using Microsoft.AspNetCore.Http;
 
 namespace Presentation.Endpoints.Orders.Get.GetStats;
 
@@ -9,6 +10,7 @@ public sealed class GetOrderStatsEndpoint(ISender _sender) : Endpoint<GetOrderSt
     public override void Configure()
     {
         Get("api/orders/stats");
+        Options(x => x.WithTags("Orders"));
     }
 
     public override async Task HandleAsync(GetOrderStatisticQuery request, CancellationToken token)

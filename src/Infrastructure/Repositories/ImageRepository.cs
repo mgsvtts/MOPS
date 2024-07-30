@@ -55,6 +55,24 @@ public sealed class ImageRepository(Cloudinary _cloudinary) : IImageRepository
         return dbImage.Adapt<Image>();
     }
 
+    public async Task UpdateMainImageAsync(CancellationToken token)
+    {
+        using var db = new DbConnection();
+
+        var image = await db.Images
+            .OrderByDescending(x => x.CreatedAt)
+            .FirstOrDefaultAsync(token: token);
+
+        if (image is null)
+        {
+            return;
+        }
+
+        image.IsMain = true;
+        await db.InsertOrReplaceAsync(image, token: token);
+
+    }
+
     private async Task UploadImageAsync(KeyValuePair<Image, Stream> image, CancellationToken token)
     {
         using var db = new DbConnection();
@@ -68,7 +86,10 @@ public sealed class ImageRepository(Cloudinary _cloudinary) : IImageRepository
                 File = new FileDescription(image.Key.Id.Identity.ToString(), image.Value)
             }, token);
 
-            await db.InsertOrReplaceAsync((result, image.Key).Adapt<Models.Image>(), token: token);
+            var dbImage = (result, image.Key).Adapt<Models.Image>();
+            dbImage.CreatedAt = DateTime.Now;
+
+            await db.InsertOrReplaceAsync(dbImage, token: token);
 
             await db.CommitTransactionAsync(token);
         }

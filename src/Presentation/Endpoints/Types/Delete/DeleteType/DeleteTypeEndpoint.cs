@@ -2,6 +2,7 @@
 using Domain.TypeAggregate.ValueObjects;
 using FastEndpoints;
 using Mediator;
+using Microsoft.AspNetCore.Http;
 
 namespace Presentation.Endpoints.Types.Delete.DeleteType;
 
@@ -10,6 +11,7 @@ public sealed class DeleteTypeEndpoint(ISender _sender) : EndpointWithoutRequest
     public override void Configure()
     {
         Delete("api/types/{typeId:guid}");
+        Options(x => x.WithTags("Types"));
     }
 
     public override async Task HandleAsync(CancellationToken token)

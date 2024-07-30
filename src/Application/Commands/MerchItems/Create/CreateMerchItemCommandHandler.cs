@@ -19,6 +19,21 @@ public sealed class CreateMerchItemCommandHandler : ICommandHandler<CreateMerchI
 
     public async ValueTask<MerchItem> Handle(CreateMerchItemCommand request, CancellationToken cancellationToken)
     {
+        ValidateImages(request);
+
+        var merchItem = request.Adapt<MerchItem>();
+
+        request.Images!.ForEach(x => x.Value.WithItemId(merchItem.Id));
+
+        await _merchItemRepository.AddAsync(merchItem, cancellationToken);
+
+        await _imageRepository.AddAsync(request.Images.ToDictionary(key => key.Value, value => value.ImageStream), cancellationToken);
+
+        return merchItem.WithImages(request.Images.Select(x => x.Value));
+    }
+
+    private static void ValidateImages(CreateMerchItemCommand request)
+    {
         if (request.Images?.Any(x => x.ImageStream.Length == 0) != true)
         {
             throw new InvalidOperationException("Some broken images found");
@@ -31,20 +46,5 @@ public sealed class CreateMerchItemCommandHandler : ICommandHandler<CreateMerchI
         {
             throw new InvalidOperationException("Set a default image");
         }
-
-        var merchItem = request.Adapt<MerchItem>();
-
-        request.Images.ForEach(x => x.Value.WithItemId(merchItem.Id));
-
-        await _merchItemRepository.AddAsync(merchItem, cancellationToken);
-
-        await _imageRepository.AddAsync(request.Images.ToDictionary(key => key.Value, value => value.ImageStream), cancellationToken);
-
-        foreach (var item in request.Images.Select(x => x.ImageStream))
-        {
-            await item.DisposeAsync();
-        }
-
-        return merchItem.WithImages(request.Images.Select(x => x.Value));
     }
 }

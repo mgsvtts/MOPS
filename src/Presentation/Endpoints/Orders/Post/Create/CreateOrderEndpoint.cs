@@ -2,6 +2,7 @@
 using FastEndpoints;
 using Mapster;
 using Mediator;
+using Microsoft.AspNetCore.Http;
 using Presentation.Endpoints.Orders.Get.GetAll;
 
 namespace Presentation.Endpoints.Orders.Post.Create;
@@ -11,6 +12,7 @@ public sealed class CreateOrderEndpoint(ISender _sender) : Endpoint<CreateOrderR
     public override void Configure()
     {
         Post("api/orders");
+        Options(x => x.WithTags("Orders"));
     }
 
     public override async Task HandleAsync(CreateOrderRequest request, CancellationToken token)

@@ -10,4 +10,5 @@ public interface IImageRepository
     Task DeleteAsync(Image image, CancellationToken token);
 
     Task<Image> GetByIdAsync(ImageId id, CancellationToken token);
+    Task UpdateMainImageAsync(CancellationToken token);
 }

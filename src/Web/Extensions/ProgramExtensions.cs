@@ -1,3 +1,4 @@
+using CloudinaryDotNet;
 using Domain.MerchItemAggregate.Repositories;
 using Domain.OrderAggregate.Repositories;
 using Domain.TypeAggregate.Repositories;
@@ -13,14 +14,20 @@ using Web.Extensions.Mapping;
 
 namespace Web.Extensions;
 
-public static class ServiceExtensions
+public static class ProgramExtensions
 {
     public static WebApplicationBuilder AddDomain(this WebApplicationBuilder builder)
     {
-        builder.Services.AddTransient<IMerchItemRepository, MerchItemRepository>();
-        builder.Services.AddTransient<ITypeRepository, TypeRepository>();
-        builder.Services.AddTransient<IOrderRepository, OrderRepository>();
-        builder.Services.AddTransient<IImageRepository, ImageRepository>();
+        var settings = builder.Configuration.GetSection("Cloudinary");
+        var cloudName = settings.GetValue<string>("CloudName");
+        var apiKey = settings.GetValue<string>("ApiKey");
+        var apiSecret = settings.GetValue<string>("ApiSecret");
+
+        builder.Services.AddSingleton<IMerchItemRepository, MerchItemRepository>();
+        builder.Services.AddSingleton<ITypeRepository, TypeRepository>();
+        builder.Services.AddSingleton<IOrderRepository, OrderRepository>();
+        builder.Services.AddScoped<IImageRepository, ImageRepository>();
+        builder.Services.AddScoped(x => new Cloudinary(new Account(cloudName, apiKey, apiSecret)));
 
         return builder;
     }
@@ -36,13 +43,18 @@ public static class ServiceExtensions
     {
         builder.Services.RegisterMapsterConfiguration();
 
-        builder.Services.AddMediator();
+        builder.Services.AddMediator(config =>
+        {
+            config.ServiceLifetime = ServiceLifetime.Scoped;
+        });
 
         return builder;
     }
 
     public static WebApplicationBuilder AddPresentation(this WebApplicationBuilder builder)
     {
+        builder.Services.AddMvcCore();
+
         ProblemDetailsExtensions.AddProblemDetails(builder.Services, x =>
         {
             x.IncludeExceptionDetails = (_, _) => builder.Environment.IsDevelopment();
@@ -78,7 +90,6 @@ public static class ServiceExtensions
 
         app.UseFastEndpoints(x =>
         {
-            x.Endpoints.RoutePrefix = "api";
             x.Endpoints.Configurator = config =>
             {
                 config.AllowAnonymous();
@@ -88,7 +99,8 @@ public static class ServiceExtensions
 
         if (app.Environment.IsDevelopment())
         {
-            app.UseSwaggerUI();
+            app.UseSwaggerGen();
+            app.UseSwaggerUi();
         }
 
         return app;
