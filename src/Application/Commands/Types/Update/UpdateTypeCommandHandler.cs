@@ -4,18 +4,14 @@ using Mediator;
 
 namespace Application.Commands.Types.Update;
 
-public sealed class UpdateTypeCommandHandler : ICommandHandler<UpdateTypeCommand, Domain.TypeAggregate.Type>
+public sealed class UpdateTypeCommandHandler(ITypeRepository _typeRepository) : ICommandHandler<UpdateTypeCommand, Domain.TypeAggregate.Type>
 {
-    private readonly ITypeRepository _typeRepository;
-
-    public UpdateTypeCommandHandler(ITypeRepository typeRepository)
-    {
-        _typeRepository = typeRepository;
-    }
-
     public async ValueTask<Domain.TypeAggregate.Type> Handle(UpdateTypeCommand request, CancellationToken cancellationToken)
     {
-        var type = request.Adapt<Domain.TypeAggregate.Type>();
+        var type = await _typeRepository.GetByIdAsync(request.Id, cancellationToken)
+            ?? throw new InvalidOperationException($"Type with id: {request.Id.Identity} not found");
+
+        type = request.Adapt<Domain.TypeAggregate.Type>();
 
         await _typeRepository.UpdateAsync(type, cancellationToken);
 

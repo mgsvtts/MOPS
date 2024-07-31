@@ -5,7 +5,7 @@ namespace Domain.MerchItemAggregate.Repositories;
 
 public interface IImageRepository
 {
-    Task AddAsync(IDictionary<Image, Stream> images, CancellationToken token);
+    Task<IEnumerable<Image>> AddAsync(IDictionary<Image, Stream> images, CancellationToken token);
 
     Task DeleteAsync(Image image, CancellationToken token);
 

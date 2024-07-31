@@ -51,6 +51,6 @@ public sealed class TypeRepository : ITypeRepository
 
         var dbType = type.Adapt<Type>();
 
-        await db.UpdateAsync(dbType, token: token);
+        await db.InsertOrReplaceAsync(dbType, token: token);
     }
 }

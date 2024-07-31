@@ -11,9 +11,15 @@ namespace Infrastructure.Repositories;
 
 public sealed class ImageRepository(Cloudinary _cloudinary) : IImageRepository
 {
-    public async Task AddAsync(IDictionary<Image, Stream> images, CancellationToken token)
+    public async Task<IEnumerable<Image>> AddAsync(IDictionary<Image, Stream> images, CancellationToken token)
     {
-        await Task.WhenAll(images.Select(x => UploadImageAsync(x, token)));
+        var result = images
+            .Select(x=> UploadImageAsync(x, token))
+            .ToList();
+
+        await Task.WhenAll(result);
+
+        return result.Select(x => x.Result);
     }
 
     public async Task DeleteAsync(Image image, CancellationToken token)
@@ -73,7 +79,7 @@ public sealed class ImageRepository(Cloudinary _cloudinary) : IImageRepository
 
     }
 
-    private async Task UploadImageAsync(KeyValuePair<Image, Stream> image, CancellationToken token)
+    private async Task<Image> UploadImageAsync(KeyValuePair<Image, Stream> image, CancellationToken token)
     {
         using var db = new DbConnection();
 
@@ -92,6 +98,8 @@ public sealed class ImageRepository(Cloudinary _cloudinary) : IImageRepository
             await db.InsertOrReplaceAsync(dbImage, token: token);
 
             await db.CommitTransactionAsync(token);
+
+            return dbImage.Adapt<Image>();
         }
         catch
         {

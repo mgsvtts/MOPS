@@ -27,14 +27,18 @@ public sealed class CreateMerchItemCommandHandler : ICommandHandler<CreateMerchI
 
         await _merchItemRepository.AddAsync(merchItem, cancellationToken);
 
-        await _imageRepository.AddAsync(request.Images.ToDictionary(key => key.Value, value => value.ImageStream), cancellationToken);
+        var images = await _imageRepository.AddAsync(request.Images.ToDictionary(key => key.Value, value => value.ImageStream), cancellationToken);
 
-        return merchItem.WithImages(request.Images.Select(x => x.Value));
+        return merchItem.WithImages(images);
     }
 
     private static void ValidateImages(CreateMerchItemCommand request)
     {
-        if (request.Images?.Any(x => x.ImageStream.Length == 0) != true)
+        if (request.Images is null || request.Images.Count == 0)
+        {
+            return;
+        }
+        if (request.Images.Any(x => x.ImageStream.Length == 0))
         {
             throw new InvalidOperationException("Some broken images found");
         }

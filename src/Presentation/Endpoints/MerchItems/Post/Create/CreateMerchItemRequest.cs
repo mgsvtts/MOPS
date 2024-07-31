@@ -6,7 +6,4 @@ public sealed record CreateMerchItemRequest(Guid TypeId,
                                             string? Description,
                                             decimal Price,
                                             decimal SelfPrice,
-                                            int AmountLeft,
-                                            IEnumerable<CreateMerchItemRequestImage>? Images);
-
-public record CreateMerchItemRequestImage(IFormFile File, bool IsMain);
+                                            int AmountLeft);

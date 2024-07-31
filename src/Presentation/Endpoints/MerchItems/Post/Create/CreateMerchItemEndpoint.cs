@@ -15,6 +15,7 @@ public sealed class CreateMerchItemEndpoint(ISender _sender) : Endpoint<CreateMe
     public override void Configure()
     {
         Post("api/merch-items");
+        AllowFileUploads();
         Options(x => x.WithTags("MerchItems"));
     }
 
@@ -22,7 +23,7 @@ public sealed class CreateMerchItemEndpoint(ISender _sender) : Endpoint<CreateMe
     {
         var command = request.Adapt<CreateMerchItemCommand>();
 
-        SetImages(request, command);
+        command = await SetImagesAsync(request, command, token);
 
         var response = await _sender.Send(command, token);
 
@@ -31,24 +32,35 @@ public sealed class CreateMerchItemEndpoint(ISender _sender) : Endpoint<CreateMe
         Response = response.Adapt<MerchItemDto>();
     }
 
-    private static CreateMerchItemCommand SetImages(CreateMerchItemRequest request, CreateMerchItemCommand command)
+    private async Task<CreateMerchItemCommand> SetImagesAsync(CreateMerchItemRequest request, CreateMerchItemCommand command, CancellationToken token)
     {
-        if (request.Images is null || !request.Images.Any())
+        var form = await HttpContext.Request.ReadFormAsync(token);
+        
+        if (form.Files is null || !form.Files.Any())
         {
             return command;
         }
 
+        var images = new List<CreateMerchItemCommandImage>();
+        var values = form.ToDictionary(x=>x.Key, x => x.Value.ToString());
+        foreach (var image in form.Files)
+        {
+            var value = values.First(x => x.Key.Contains(image.Name.Split('.').First()));
+            images.Add(new CreateMerchItemCommandImage(new Image(new ImageId(),
+                                                                 new MerchItemId(),
+                                                                 isMain: bool.Parse(value.Value)), 
+                                                       image.OpenReadStream()));
+        }
+
         return command with
         {
-            Images = request.Images!.Select(x => new CreateMerchItemCommandImage(
-                new Image(new ImageId(), new MerchItemId(), isMain: x.IsMain),
-                x.File.OpenReadStream())).ToList()
+            Images = images
         };
     }
 
     private static async Task DisposeImages(CreateMerchItemCommand command)
     {
-        if (command.Images is null || !command.Images.Any())
+        if (command.Images is null || command.Images.Count == 0)
         {
             return;
         }

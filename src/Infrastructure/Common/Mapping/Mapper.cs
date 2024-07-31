@@ -1,4 +1,5 @@
-﻿using Domain.Common.ValueObjects;
+﻿using CloudinaryDotNet.Actions;
+using Domain.Common.ValueObjects;
 using Domain.MerchItemAggregate.Entities.ValueObjects.Images;
 using Domain.MerchItemAggregate.ValueObjects;
 using Domain.TypeAggregate.ValueObjects;
@@ -18,7 +19,7 @@ public sealed class Mapper : IRegister
             Id = src.Id.Identity,
             TypeId = src.TypeId.Identity,
             Name = src.Name.Value,
-            Description = src.Description != null ? src.Description.Value.ToString() : null,
+            Description = src.Description != null ? src.Description.Value.Value.ToString() : null,
             Price = src.Price.Value,
             SelfPrice = src.SelfPrice.Value,
             Amount = src.AmountLeft.Value,
@@ -52,14 +53,15 @@ public sealed class Mapper : IRegister
               CreatedAt = src.CreatedAt
           });
 
-        TypeAdapterConfig<Domain.MerchItemAggregate.Entities.Image, Image>
+        TypeAdapterConfig<(ImageUploadResult Result, Domain.MerchItemAggregate.Entities.Image Image), Image>
           .ForType()
           .MapWith(src => new Image
           {
-              Id = src.Id.Identity,
-              IsMain = src.IsMain,
-              MerchItemId = src.MerchItemId.Identity,
-              Url = src.Url
+              Id = src.Image.Id.Identity,
+              IsMain = src.Image.IsMain,
+              MerchItemId = src.Image.MerchItemId.Identity,
+              Url = src.Result.Url.AbsoluteUri,
+              PublicId = src.Result.PublicId,
           });
 
         TypeAdapterConfig<Image, Domain.MerchItemAggregate.Entities.Image>
