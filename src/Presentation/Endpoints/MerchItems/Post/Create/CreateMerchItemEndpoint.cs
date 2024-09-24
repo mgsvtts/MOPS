@@ -36,20 +36,20 @@ public sealed class CreateMerchItemEndpoint(ISender _sender) : Endpoint<CreateMe
     private async Task<CreateMerchItemCommand> SetImagesAsync(CreateMerchItemRequest request, CreateMerchItemCommand command, CancellationToken token)
     {
         var form = await HttpContext.Request.ReadFormAsync(token);
-        
+
         if (form.Files is null || !form.Files.Any())
         {
             return command;
         }
 
         var images = new List<CreateMerchItemCommandImage>();
-        var values = form.ToDictionary(x=>x.Key, x => x.Value.ToString());
+        var values = form.ToDictionary(x => x.Key, x => x.Value.ToString());
         foreach (var image in form.Files)
         {
             var value = values.First(x => x.Key.Contains(image.Name.Split('.').First()));
             images.Add(new CreateMerchItemCommandImage(new Image(new ImageId(),
                                                                  new MerchItemId(),
-                                                                 isMain: bool.Parse(value.Value)), 
+                                                                 isMain: bool.Parse(value.Value)),
                                                        image.OpenReadStream()));
         }
 

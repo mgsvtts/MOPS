@@ -1,4 +1,5 @@
 using Domain.Common;
+using Domain.Common.ValueObjects;
 using Domain.MerchItemAggregate;
 using Domain.OrderAggregate.ValueObjects;
 
@@ -10,9 +11,11 @@ public sealed class Order : AggregateRoot<OrderId>
 
     public IReadOnlyList<OrderItem> Items => _items.AsReadOnly();
 
-    public PaymentMethod PaymentMethod { get; set; }
+    public PaymentMethod PaymentMethod { get; private set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; private set; }
+
+    public Price Price => _items.Sum(x => x.Price);
 
     public Order(OrderId id,
                  IEnumerable<OrderItem>? items,

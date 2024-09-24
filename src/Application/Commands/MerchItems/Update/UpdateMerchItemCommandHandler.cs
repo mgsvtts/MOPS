@@ -4,15 +4,8 @@ using Mediator;
 
 namespace Application.Commands.MerchItems.Update;
 
-public sealed class UpdateMerchItemCommandHandler : ICommandHandler<UpdateMerchItemCommand, MerchItem>
+public sealed class UpdateMerchItemCommandHandler(IMerchItemRepository _repository) : ICommandHandler<UpdateMerchItemCommand, MerchItem>
 {
-    private readonly IMerchItemRepository _repository;
-
-    public UpdateMerchItemCommandHandler(IMerchItemRepository repository)
-    {
-        _repository = repository;
-    }
-
     public async ValueTask<MerchItem> Handle(UpdateMerchItemCommand request, CancellationToken cancellationToken)
     {
         var item = await _repository.GetByIdAsync(request.Id, cancellationToken)

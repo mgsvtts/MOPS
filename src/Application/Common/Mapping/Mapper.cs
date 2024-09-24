@@ -3,6 +3,7 @@ using Application.Commands.Orders.Create;
 using Application.Commands.Types.Create;
 using Application.Commands.Types.Update;
 using Application.Queries.Orders.GetAll;
+using Domain.Common.ValueObjects;
 using Domain.MerchItemAggregate.ValueObjects;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.TypeAggregate.ValueObjects;
@@ -61,8 +62,8 @@ public sealed class Mapper : IRegister
        .MapWith(src => new Domain.OrderAggregate.Order(new OrderId(src.Id),
                                                        src.OrderItems.Select(x => new OrderItem(new MerchItemId(x.MerchItemId),
                                                                                                new MerchItemAmount(x.Amount),
-                                                                                               new MerchItemPrice(x.Price),
-                                                                                               new MerchItemPrice(x.SelfPrice))),
+                                                                                               new Price(x.Price),
+                                                                                               new Price(x.SelfPrice))),
                                                        src.PaymentMethod,
                                                        src.CreatedAt));
 
@@ -71,6 +72,8 @@ public sealed class Mapper : IRegister
         .MapWith(src => new GetAllOrdersResponseOrder(src.Id,
                                                       src.CreatedAt,
                                                       src.PaymentMethod,
+                                                      new GetAllOrdersResponseTotals(src.OrderItems.Sum(x => x.Price),
+                                                                                     src.OrderItems.Sum(x => x.SelfPrice)),
                                                       src.OrderItems.Select(x => new GetAllOrdersResponseOrderItem(x.Id,
                                                                                                                   x.Price,
                                                                                                                   x.SelfPrice,

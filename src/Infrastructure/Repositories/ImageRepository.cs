@@ -14,7 +14,7 @@ public sealed class ImageRepository(Cloudinary _cloudinary) : IImageRepository
     public async Task<IEnumerable<Image>> AddAsync(IDictionary<Image, Stream> images, CancellationToken token)
     {
         var result = images
-            .Select(x=> UploadImageAsync(x, token))
+            .Select(x => UploadImageAsync(x, token))
             .ToList();
 
         await Task.WhenAll(result);
@@ -76,7 +76,6 @@ public sealed class ImageRepository(Cloudinary _cloudinary) : IImageRepository
 
         image.IsMain = true;
         await db.InsertOrReplaceAsync(image, token: token);
-
     }
 
     private async Task<Image> UploadImageAsync(KeyValuePair<Image, Stream> image, CancellationToken token)

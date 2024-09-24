@@ -1,7 +1,8 @@
-﻿using Infrastructure.Common;
+﻿using Domain.MerchItemAggregate;
+using Infrastructure.Common;
 using LinqToDB;
+using Mapster;
 using Mediator;
-using MerchItem = Infrastructure.Models.MerchItem;
 
 namespace Application.Queries.MerchItems.GetAll;
 
@@ -11,8 +12,10 @@ public sealed class GetAllMerchItemsQueryHandler : IQueryHandler<GetAllMerchItem
     {
         using var db = new DbConnection();
 
-        return await db.MerchItems
+        var items = await db.MerchItems
             .LoadWith(x => x.Images)
             .ToListAsync(cancellationToken);
+
+        return items.Adapt<List<MerchItem>>();
     }
 }

@@ -7,11 +7,11 @@ using Presentation.Endpoints.MerchItems.Common;
 
 namespace Presentation.Endpoints.MerchItems.Get.GetAll;
 
-public sealed class GetAllMerchItemsEndpoint(ISender _sender) : Endpoint<GetAllMerchItemsRequest, IEnumerable<MerchItemDto>>
+public sealed class GetAllMerchItemsEndpoint(ISender _sender) : Endpoint<GetAllMerchItemsRequest, List<MerchItemDto>>
 {
     public override void Configure()
     {
-        Get("api/merch-items"); 
+        Get("api/merch-items");
         Options(x => x.WithTags("MerchItems"));
     }
 
@@ -19,6 +19,6 @@ public sealed class GetAllMerchItemsEndpoint(ISender _sender) : Endpoint<GetAllM
     {
         var response = await _sender.Send(request.Adapt<GetAllMerchItemsQuery>(), token);
 
-        Response = response.Adapt<IEnumerable<MerchItemDto>>();
+        Response = response.Adapt<List<MerchItemDto>>();
     }
 }

@@ -16,9 +16,9 @@ public sealed class MerchItem : AggregateRoot<MerchItemId>
 
     public Description? Description { get; private set; }
 
-    public MerchItemPrice Price { get; private set; }
+    public Price Price { get; private set; }
 
-    public MerchItemPrice SelfPrice { get; private set; }
+    public Price SelfPrice { get; private set; }
 
     public MerchItemAmount AmountLeft { get; private set; }
 
@@ -30,8 +30,8 @@ public sealed class MerchItem : AggregateRoot<MerchItemId>
                      TypeId typeId,
                      Name? name = null,
                      Description? description = null,
-                     MerchItemPrice? price = null,
-                     MerchItemPrice? selfPrice = null,
+                     Price? price = null,
+                     Price? selfPrice = null,
                      MerchItemAmount? amountLeft = null,
                      DateTime? createdAt = null,
                      IEnumerable<Image>? images = null) : base(id)
@@ -40,8 +40,8 @@ public sealed class MerchItem : AggregateRoot<MerchItemId>
         TypeId = typeId;
         Name = name ?? new Name("Без названия");
         Description = description;
-        Price = price ?? new MerchItemPrice();
-        SelfPrice = selfPrice ?? new MerchItemPrice();
+        Price = price ?? new Price();
+        SelfPrice = selfPrice ?? new Price();
         AmountLeft = amountLeft ?? new MerchItemAmount();
         CreatedAt = createdAt ?? DateTime.Now;
         _images = images is not null ? images.ToList() : new List<Image>();
@@ -90,14 +90,14 @@ public sealed class MerchItem : AggregateRoot<MerchItemId>
         return this;
     }
 
-    public MerchItem WithPrice(MerchItemPrice price)
+    public MerchItem WithPrice(Price price)
     {
         Price = price;
 
         return this;
     }
 
-    public MerchItem WithSelfPrice(MerchItemPrice selfPrice)
+    public MerchItem WithSelfPrice(Price selfPrice)
     {
         SelfPrice = selfPrice;
 

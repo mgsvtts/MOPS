@@ -3,9 +3,13 @@
 namespace Application.Queries.Orders.GetAll;
 
 public readonly record struct GetAllOrdersResponseOrder(Guid Id,
-                                                       DateTime CreatedAt,
-                                                       PaymentMethod PaymentMethod,
-                                                       IEnumerable<GetAllOrdersResponseOrderItem> Items);
+                                                        DateTime CreatedAt,
+                                                        PaymentMethod PaymentMethod,
+                                                        GetAllOrdersResponseTotals Totals,
+                                                        IEnumerable<GetAllOrdersResponseOrderItem> Items);
+
+public readonly record struct GetAllOrdersResponseTotals(decimal TotalPrice,
+                                                         decimal TotalSelfPrice);
 
 public readonly record struct GetAllOrdersResponseOrderItem(Guid Id,
                                                     decimal Price,

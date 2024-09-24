@@ -4,15 +4,8 @@ using Mediator;
 
 namespace Application.Commands.Types.Create;
 
-public sealed class CreateTypeCommandHandler : ICommandHandler<CreateTypeCommand, Domain.TypeAggregate.Type>
+public sealed class CreateTypeCommandHandler(ITypeRepository _typeRepository) : ICommandHandler<CreateTypeCommand, Domain.TypeAggregate.Type>
 {
-    private readonly ITypeRepository _typeRepository;
-
-    public CreateTypeCommandHandler(ITypeRepository typeRepository)
-    {
-        _typeRepository = typeRepository;
-    }
-
     public async ValueTask<Domain.TypeAggregate.Type> Handle(CreateTypeCommand request, CancellationToken cancellationToken)
     {
         var type = request.Adapt<Domain.TypeAggregate.Type>();

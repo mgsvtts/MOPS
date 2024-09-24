@@ -4,15 +4,8 @@ using Mediator;
 
 namespace Application.Commands.MerchItems.Calculate;
 
-public sealed class CalculateMerchItemCommandHandler : ICommandHandler<CalculateMerchItemCommand, CalculateMerchItemResponse>
+public sealed class CalculateMerchItemCommandHandler(IMerchItemRepository _repository) : ICommandHandler<CalculateMerchItemCommand, CalculateMerchItemResponse>
 {
-    private readonly IMerchItemRepository _repository;
-
-    public CalculateMerchItemCommandHandler(IMerchItemRepository repository)
-    {
-        _repository = repository;
-    }
-
     public async ValueTask<CalculateMerchItemResponse> Handle(CalculateMerchItemCommand request, CancellationToken cancellationToken)
     {
         var items = await _repository.GetAllByIdsAsync(request.Items.Select(x => x.ItemId), cancellationToken);

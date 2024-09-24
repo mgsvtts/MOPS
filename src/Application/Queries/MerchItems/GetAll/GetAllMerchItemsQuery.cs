@@ -1,4 +1,4 @@
-﻿using Infrastructure.Models;
+﻿using Domain.MerchItemAggregate;
 using Mediator;
 
 namespace Application.Queries.MerchItems.GetAll;

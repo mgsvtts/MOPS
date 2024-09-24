@@ -13,7 +13,6 @@ using Mapster;
 using Presentation.Endpoints.MerchItems.Common;
 using Presentation.Endpoints.MerchItems.Get.GetAll;
 using Presentation.Endpoints.MerchItems.Patch.Update;
-using Presentation.Endpoints.MerchItems.Post.Calculate;
 using Presentation.Endpoints.MerchItems.Post.Create;
 using Presentation.Endpoints.Orders.Post.Create;
 using Presentation.Endpoints.Types.Common;
@@ -44,8 +43,8 @@ public sealed class Mapper : IRegister
          .MapWith(src => new CreateMerchItemCommand(new TypeId(src.TypeId),
                                                     new Name(src.Name),
                                                     src.Description != null ? new Description(src.Description) : null,
-                                                    new MerchItemPrice(src.Price),
-                                                    new MerchItemPrice(src.SelfPrice),
+                                                    new Price(src.Price),
+                                                    new Price(src.SelfPrice),
                                                     new MerchItemAmount(src.AmountLeft),
                                                     null));
 
@@ -59,8 +58,8 @@ public sealed class Mapper : IRegister
                                                        src.Request.TypeId != null ? new TypeId(src.Request.TypeId) : null,
                                                        !string.IsNullOrEmpty(src.Request.Name) ? new Name(src.Request.Name) : null,
                                                        src.Request.Description != null ? new Description(src.Request.Description) : null,
-                                                       src.Request.Price != null ? new MerchItemPrice(src.Request.Price.Value) : null,
-                                                       src.Request.SelfPrice != null ? new MerchItemPrice(src.Request.SelfPrice.Value) : null,
+                                                       src.Request.Price != null ? new Price(src.Request.Price.Value) : null,
+                                                       src.Request.SelfPrice != null ? new Price(src.Request.SelfPrice.Value) : null,
                                                        src.Request.AmountLeft != null ? new MerchItemAmount(src.Request.AmountLeft.Value) : null));
 
         TypeAdapterConfig<CreateTypeRequest, CreateTypeCommand>

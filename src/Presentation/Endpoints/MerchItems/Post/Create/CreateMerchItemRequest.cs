@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace Presentation.Endpoints.MerchItems.Post.Create;
+﻿namespace Presentation.Endpoints.MerchItems.Post.Create;
 public sealed record CreateMerchItemRequest(Guid TypeId,
                                             string Name,
                                             string? Description,

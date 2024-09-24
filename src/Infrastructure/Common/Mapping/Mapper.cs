@@ -32,8 +32,8 @@ public sealed class Mapper : IRegister
                                                                    new TypeId(src.TypeId),
                                                                    new Name(src.Name),
                                                                    src.Description != null ? new Description(src.Description) : null,
-                                                                   new MerchItemPrice(src.Price),
-                                                                   new MerchItemPrice(src.SelfPrice),
+                                                                   new Price(src.Price),
+                                                                   new Price(src.SelfPrice),
                                                                    new MerchItemAmount(src.Amount),
                                                                    src.CreatedAt,
                                                                    src.Images.Select(x => new Domain.MerchItemAggregate.Entities.Image(new ImageId(x.Id), new MerchItemId(x.MerchItemId), x.Url, x.IsMain))));

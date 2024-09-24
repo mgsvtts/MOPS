@@ -3,15 +3,8 @@ using Mediator;
 
 namespace Application.Commands.Types.Delete;
 
-public sealed class DeleteTypeCommandHandler : ICommandHandler<DeleteTypeCommand>
+public sealed class DeleteTypeCommandHandler(ITypeRepository _typeRepository) : ICommandHandler<DeleteTypeCommand>
 {
-    private readonly ITypeRepository _typeRepository;
-
-    public DeleteTypeCommandHandler(ITypeRepository typeRepository)
-    {
-        _typeRepository = typeRepository;
-    }
-
     public async ValueTask<Unit> Handle(DeleteTypeCommand request, CancellationToken cancellationToken)
     {
         var type = await _typeRepository.GetByIdAsync(request.Id, cancellationToken)

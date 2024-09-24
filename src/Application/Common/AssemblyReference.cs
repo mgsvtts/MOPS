@@ -1,5 +1,5 @@
 ﻿namespace Application.Common;
 
-public struct AssemblyReference
+public class AssemblyReference
 {
 }

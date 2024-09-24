@@ -3,15 +3,8 @@ using Mediator;
 
 namespace Application.Commands.MerchItems.DeleteImage;
 
-public sealed class DeleteImageCommandHandler : ICommandHandler<DeleteImageCommand>
+public sealed class DeleteImageCommandHandler(IImageRepository _imageRepository) : ICommandHandler<DeleteImageCommand>
 {
-    private readonly IImageRepository _imageRepository;
-
-    public DeleteImageCommandHandler(IImageRepository imageRepository)
-    {
-        _imageRepository = imageRepository;
-    }
-
     public async ValueTask<Unit> Handle(DeleteImageCommand request, CancellationToken cancellationToken)
     {
         var image = await _imageRepository.GetByIdAsync(request.Id, cancellationToken)

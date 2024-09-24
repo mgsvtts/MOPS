@@ -12,8 +12,10 @@ public sealed class OrderRepository : IOrderRepository
 {
     public async Task AddAsync(Order order, CancellationToken token)
     {
-        var dbOrder = order.Adapt<Order>();
+        var dbOrder = order.Adapt<Models.Order>();
         var dbOrderItems = order.Items.Adapt<List<Models.OrderItem>>();
+
+        dbOrderItems.ForEach(x => x.OrderId = dbOrder.Id);
 
         using var db = new DbConnection();
 
@@ -38,7 +40,7 @@ public sealed class OrderRepository : IOrderRepository
     {
         using var db = new DbConnection();
 
-        var item = await db.Orders.FirstOrDefaultAsync(x => x.Id == id.Identity);
+        var item = await db.Orders.FirstOrDefaultAsync(x => x.Id == id.Identity, token: token);
 
         return item.Adapt<Order>();
     }

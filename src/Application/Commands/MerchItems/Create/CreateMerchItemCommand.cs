@@ -9,8 +9,8 @@ namespace Application.Commands.MerchItems.Create;
 public sealed record CreateMerchItemCommand(TypeId TypeId,
                                             Name Name,
                                             Description? Description,
-                                            MerchItemPrice Price,
-                                            MerchItemPrice SelfPrice,
+                                            Price Price,
+                                            Price SelfPrice,
                                             MerchItemAmount AmountLeft,
                                             List<CreateMerchItemCommandImage>? Images) : ICommand<MerchItem>;
 

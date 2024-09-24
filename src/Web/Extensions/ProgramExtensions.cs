@@ -83,7 +83,7 @@ public static class ProgramExtensions
                                       .AllowAnyMethod()
                                       .AllowAnyHeader());
 
-        app.MapHealthChecks("/api/accounts/health", new HealthCheckOptions
+        app.MapHealthChecks("/api/mops/health", new HealthCheckOptions
         {
             ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
         });

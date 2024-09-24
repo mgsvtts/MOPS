@@ -3,15 +3,8 @@ using Mediator;
 
 namespace Application.Commands.Orders.Delete;
 
-public sealed class DeleteOrderCommandHandler : ICommandHandler<DeleteOrderCommand>
+public sealed class DeleteOrderCommandHandler(IOrderRepository _orderRepository) : ICommandHandler<DeleteOrderCommand>
 {
-    private readonly IOrderRepository _orderRepository;
-
-    public DeleteOrderCommandHandler(IOrderRepository orderRepository)
-    {
-        _orderRepository = orderRepository;
-    }
-
     public async ValueTask<Unit> Handle(DeleteOrderCommand request, CancellationToken cancellationToken)
     {
         var order = await _orderRepository.GetByIdAsync(request.Id, cancellationToken)

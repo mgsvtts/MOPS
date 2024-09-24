@@ -10,6 +10,6 @@ public sealed record UpdateMerchItemCommand(MerchItemId Id,
                                             TypeId? TypeId = null,
                                             Name? Name = null,
                                             Description? Description = null,
-                                            MerchItemPrice? Price = null,
-                                            MerchItemPrice? SelfPrice = null,
+                                            Price? Price = null,
+                                            Price? SelfPrice = null,
                                             MerchItemAmount? AmountLeft = null) : ICommand<MerchItem>;

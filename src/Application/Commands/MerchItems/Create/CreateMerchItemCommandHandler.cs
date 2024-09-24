@@ -19,42 +19,42 @@ public sealed class CreateMerchItemCommandHandler : ICommandHandler<CreateMerchI
 
     public async ValueTask<MerchItem> Handle(CreateMerchItemCommand request, CancellationToken cancellationToken)
     {
-        ValidateImages(request);
-
         var merchItem = request.Adapt<MerchItem>();
 
         await _merchItemRepository.AddAsync(merchItem, cancellationToken);
 
-        if (request.Images is null)
+        if (!ImagesIsValid(request.Images))
         {
             return merchItem;
         }
 
-        request.Images.ForEach(x => x.Value.WithItemId(merchItem.Id));
+        request.Images!.ForEach(x => x.Value.WithItemId(merchItem.Id));
 
         var images = await _imageRepository.AddAsync(request.Images.ToDictionary(key => key.Value, value => value.ImageStream), cancellationToken);
 
         return merchItem.WithImages(images);
     }
 
-    private static void ValidateImages(CreateMerchItemCommand request)
+    private static bool ImagesIsValid(IEnumerable<CreateMerchItemCommandImage>? images)
     {
-        if (request.Images is null || request.Images.Count == 0)
+        if (images is null || !images.Any())
         {
-            return;
+            return false;
         }
 
-        if (request.Images.Any(x => x.ImageStream.Length == 0))
+        if (images.Any(x => x.ImageStream.Length == 0))
         {
             throw new InvalidOperationException("Some broken images found");
         }
-        if (request.Images.Where(x => x.Value.IsMain == true).Count() != 1)
+        if (images.Where(x => x.Value.IsMain == true).Count() != 1)
         {
             throw new InvalidOperationException("Exaclty one main image allowed");
         }
-        if (!request.Images.Where(x => x.Value.IsMain == true).Any())
+        if (!images.Where(x => x.Value.IsMain == true).Any())
         {
             throw new InvalidOperationException("Set a default image");
         }
+
+        return true;
     }
 }

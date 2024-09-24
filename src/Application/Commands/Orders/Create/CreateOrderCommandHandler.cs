@@ -7,18 +7,9 @@ using Mediator;
 
 namespace Application.Commands.Orders.Create;
 
-public sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Order>
+public sealed class CreateOrderCommandHandler(IOrderRepository _orderRepository,
+                                              IMerchItemRepository _merchItemRepository) : ICommandHandler<CreateOrderCommand, Order>
 {
-    private readonly IOrderRepository _orderRepository;
-    private readonly IMerchItemRepository _merchItemRepository;
-
-    public CreateOrderCommandHandler(IOrderRepository orderRepository,
-                                     IMerchItemRepository merchItemRepository)
-    {
-        _orderRepository = orderRepository;
-        _merchItemRepository = merchItemRepository;
-    }
-
     public async ValueTask<Order> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
         var order = request.Adapt<Order>();
@@ -30,10 +21,12 @@ public sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderComma
 
         SubtractAmountFromItems(order, actualMerchItems);
 
-        await _orderRepository.AddAsync(order, cancellationToken);
-        var merchTasks = actualMerchItems.Select(x => _merchItemRepository.UpdateAsync(x, cancellationToken));
+        var orderTask = _orderRepository.AddAsync(order, cancellationToken);
+        var tasks = actualMerchItems.Select(x => _merchItemRepository.UpdateAsync(x, cancellationToken)).ToList();
 
-        await Task.WhenAll(merchTasks);
+        tasks.Add(orderTask);
+
+        await Task.WhenAll(tasks);
 
         return order;
     }
