@@ -11,13 +11,13 @@ public sealed class UpdateTypeEndpoint(ISender _sender) : Endpoint<UpdateTypeReq
 {
     public override void Configure()
     {
-        Patch("api/types");
+        Patch("api/types/{id:guid}");
         Options(x => x.WithTags("Types"));
     }
 
     public override async Task HandleAsync(UpdateTypeRequest request, CancellationToken token)
     {
-        var response = await _sender.Send(request.Adapt<UpdateTypeCommand>(), token);
+        var response = await _sender.Send((Route<Guid>("id"), request).Adapt<UpdateTypeCommand>(), token);
 
         Response = response.Adapt<TypeDto>();
     }

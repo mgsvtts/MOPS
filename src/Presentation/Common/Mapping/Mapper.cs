@@ -53,15 +53,15 @@ public sealed class Mapper : IRegister
         .ForType()
         .MapWith(src => new GetAllMerchItemsQuery(src.ShowNotAvailable, src.Sort));
 
-        TypeAdapterConfig<UpdateMerchItemRequest, UpdateMerchItemCommand>
+        TypeAdapterConfig<(Guid Id, UpdateMerchItemRequest Request), UpdateMerchItemCommand>
             .ForType()
             .MapWith(src => new UpdateMerchItemCommand(new MerchItemId(src.Id),
-                                                       src.TypeId != null ? new TypeId(src.TypeId) : null,
-                                                       !string.IsNullOrEmpty(src.Name) ? new Name(src.Name) : null,
-                                                       src.Description != null ? new Description(src.Description) : null,
-                                                       src.Price != null ? new MerchItemPrice(src.Price.Value) : null,
-                                                       src.SelfPrice != null ? new MerchItemPrice(src.SelfPrice.Value) : null,
-                                                       src.AmountLeft != null ? new MerchItemAmount(src.AmountLeft.Value) : null));
+                                                       src.Request.TypeId != null ? new TypeId(src.Request.TypeId) : null,
+                                                       !string.IsNullOrEmpty(src.Request.Name) ? new Name(src.Request.Name) : null,
+                                                       src.Request.Description != null ? new Description(src.Request.Description) : null,
+                                                       src.Request.Price != null ? new MerchItemPrice(src.Request.Price.Value) : null,
+                                                       src.Request.SelfPrice != null ? new MerchItemPrice(src.Request.SelfPrice.Value) : null,
+                                                       src.Request.AmountLeft != null ? new MerchItemAmount(src.Request.AmountLeft.Value) : null));
 
         TypeAdapterConfig<CreateTypeRequest, CreateTypeCommand>
          .ForType()
@@ -71,9 +71,9 @@ public sealed class Mapper : IRegister
          .ForType()
          .MapWith(src => new CalculateMerchItemCommand(src.Select(x => new Application.Commands.MerchItems.Calculate.CalculateMerchItemRequest(new MerchItemId(x.ItemId), x.Amount))));
 
-        TypeAdapterConfig<UpdateTypeRequest, UpdateTypeCommand>
+        TypeAdapterConfig<(Guid Id, UpdateTypeRequest Request), UpdateTypeCommand>
         .ForType()
-        .MapWith(src => new UpdateTypeCommand(new TypeId(src.Id), new Name(src.Name)));
+        .MapWith(src => new UpdateTypeCommand(new TypeId(src.Id), new Name(src.Request.Name)));
 
         TypeAdapterConfig<Application.Commands.MerchItems.Calculate.CalculateMerchItemResponse, Endpoints.MerchItems.Post.Calculate.CalculateMerchItemResponse>
             .ForType()

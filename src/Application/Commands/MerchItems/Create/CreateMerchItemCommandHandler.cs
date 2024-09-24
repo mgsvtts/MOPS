@@ -23,9 +23,14 @@ public sealed class CreateMerchItemCommandHandler : ICommandHandler<CreateMerchI
 
         var merchItem = request.Adapt<MerchItem>();
 
-        request.Images!.ForEach(x => x.Value.WithItemId(merchItem.Id));
-
         await _merchItemRepository.AddAsync(merchItem, cancellationToken);
+
+        if (request.Images is null)
+        {
+            return merchItem;
+        }
+
+        request.Images.ForEach(x => x.Value.WithItemId(merchItem.Id));
 
         var images = await _imageRepository.AddAsync(request.Images.ToDictionary(key => key.Value, value => value.ImageStream), cancellationToken);
 
@@ -38,6 +43,7 @@ public sealed class CreateMerchItemCommandHandler : ICommandHandler<CreateMerchI
         {
             return;
         }
+
         if (request.Images.Any(x => x.ImageStream.Length == 0))
         {
             throw new InvalidOperationException("Some broken images found");

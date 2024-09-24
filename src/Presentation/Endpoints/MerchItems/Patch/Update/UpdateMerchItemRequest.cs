@@ -1,7 +1,6 @@
 namespace Presentation.Endpoints.MerchItems.Patch.Update;
 
-public sealed record UpdateMerchItemRequest(Guid Id,
-                                            Guid? TypeId = null,
+public sealed record UpdateMerchItemRequest(Guid? TypeId = null,
                                             string? Name = null,
                                             string? Description = null,
                                             decimal? Price = null,

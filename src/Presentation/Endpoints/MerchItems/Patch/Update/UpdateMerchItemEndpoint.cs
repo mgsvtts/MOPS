@@ -11,13 +11,13 @@ public sealed class UpdateMerchItemEndpoint(ISender _sender) : Endpoint<UpdateMe
 {
     public override void Configure()
     {
-        Patch("api/merch-items");
+        Patch("api/merch-items/{id:guid}");
         Options(x => x.WithTags("MerchItems"));
     }
 
     public override async Task HandleAsync(UpdateMerchItemRequest request, CancellationToken token)
     {
-        var response = await _sender.Send(request.Adapt<UpdateMerchItemCommand>(), token);
+        var response = await _sender.Send((Route<Guid>("id"), request).Adapt<UpdateMerchItemCommand>(), token);
 
         Response = response.Adapt<MerchItemDto>();
     }

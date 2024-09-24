@@ -10,14 +10,14 @@ public sealed class DeleteImageEndpoint(ISender _sender) : EndpointWithoutReques
 {
     public override void Configure()
     {
-        Delete("api/merch-items/image/{imageId:guid}");
+        Delete("api/merch-items/image/{id:guid}");
 
         Options(x => x.WithTags("MerchItems"));
     }
 
     public override async Task HandleAsync(CancellationToken token)
     {
-        await _sender.Send(new DeleteImageCommand(new ImageId(Route<Guid>("imageId"))), token);
+        await _sender.Send(new DeleteImageCommand(new ImageId(Route<Guid>("id"))), token);
 
         await SendNoContentAsync();
     }

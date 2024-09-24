@@ -10,14 +10,14 @@ public sealed class DeleteMerchItemEndpoint(ISender _sender) : EndpointWithoutRe
 {
     public override void Configure()
     {
-        Delete("api/merch-items/{merchItemId:guid}");
+        Delete("api/merch-items/{id:guid}");
 
         Options(x => x.WithTags("MerchItems"));
     }
 
     public override async Task HandleAsync(CancellationToken token)
     {
-        await _sender.Send(new DeleteMerchItemCommand(new MerchItemId(Route<Guid>("merchItemId"))), token);
+        await _sender.Send(new DeleteMerchItemCommand(new MerchItemId(Route<Guid>("id"))), token);
 
         await SendNoContentAsync();
     }

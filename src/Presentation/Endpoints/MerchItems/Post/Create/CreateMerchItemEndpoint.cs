@@ -7,6 +7,7 @@ using Mapster;
 using Mediator;
 using Microsoft.AspNetCore.Http;
 using Presentation.Endpoints.MerchItems.Common;
+using Presentation.Endpoints.MerchItems.Get.GetAll;
 
 namespace Presentation.Endpoints.MerchItems.Post.Create;
 
@@ -29,7 +30,7 @@ public sealed class CreateMerchItemEndpoint(ISender _sender) : Endpoint<CreateMe
 
         await DisposeImages(command);
 
-        Response = response.Adapt<MerchItemDto>();
+        await SendCreatedAtAsync<GetAllMerchItemsEndpoint>(null, response.Adapt<MerchItemDto>());
     }
 
     private async Task<CreateMerchItemCommand> SetImagesAsync(CreateMerchItemRequest request, CreateMerchItemCommand command, CancellationToken token)

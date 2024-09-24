@@ -4,6 +4,7 @@ using Mapster;
 using Mediator;
 using Microsoft.AspNetCore.Http;
 using Presentation.Endpoints.Types.Common;
+using Presentation.Endpoints.Types.Get.GetAll;
 
 namespace Presentation.Endpoints.Types.Post.Create;
 
@@ -19,6 +20,6 @@ public sealed class CreateTypeEndpoint(ISender _sender) : Endpoint<CreateTypeReq
     {
         var response = await _sender.Send(request.Adapt<CreateTypeCommand>(), token);
 
-        Response = response.Adapt<TypeDto>();
+        await SendCreatedAtAsync<GetAllTypesEndpoint>(null, response.Adapt<TypeDto>());
     }
 }
