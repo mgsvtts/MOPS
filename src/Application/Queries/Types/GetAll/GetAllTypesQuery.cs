@@ -1,5 +1,6 @@
+using Application.Queries.Common;
 using Mediator;
 
 namespace Application.Queries.Types.GetAll;
 
-public sealed record GetAllTypesQuery() : IQuery<IEnumerable<Domain.TypeAggregate.Type>>;
+public sealed record GetAllTypesQuery(PaginationMeta Meta) : IQuery<Pagination<Infrastructure.Models.Type>>;

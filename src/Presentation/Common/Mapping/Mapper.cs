@@ -4,12 +4,15 @@ using Application.Commands.MerchItems.Update;
 using Application.Commands.Orders.Create;
 using Application.Commands.Types.Create;
 using Application.Commands.Types.Update;
+using Application.Queries.Common;
 using Application.Queries.MerchItems.GetAll;
 using Domain.Common.ValueObjects;
 using Domain.MerchItemAggregate.ValueObjects;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.TypeAggregate.ValueObjects;
 using Mapster;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using Presentation.Endpoints.MerchItems.Common;
 using Presentation.Endpoints.MerchItems.Get.GetAll;
 using Presentation.Endpoints.MerchItems.Patch.Update;
@@ -34,7 +37,7 @@ public sealed class Mapper : IRegister
                                     src.Price.Value,
                                     src.SelfPrice.Value,
                                     src.AmountLeft.Value,
-                                    src.GetBenefitPercent(),
+                                    new MerchItemBenefit(src.GetBenefitPercent().ToString("0.##"), src.Price - src.SelfPrice),
                                     src.CreatedAt,
                                     src.Images.Select(x => new ImageDto(x.Id.Identity, x.IsMain, x.Url!))));
 
@@ -48,9 +51,9 @@ public sealed class Mapper : IRegister
                                                     new MerchItemAmount(src.AmountLeft),
                                                     null));
 
-        TypeAdapterConfig<GetAllMerchItemsRequest, GetAllMerchItemsQuery>
+        TypeAdapterConfig<(HttpRequest HttpRequest, GetAllMerchItemsRequest Request), GetAllMerchItemsQuery>
         .ForType()
-        .MapWith(src => new GetAllMerchItemsQuery(src.ShowNotAvailable, src.Sort));
+        .MapWith(src => new GetAllMerchItemsQuery(src.Request.Sort, new PaginationMeta(src.Request.Page, new PaginationApi(src.HttpRequest.Path, src.HttpRequest.QueryString.ToString()))));
 
         TypeAdapterConfig<(Guid Id, UpdateMerchItemRequest Request), UpdateMerchItemCommand>
             .ForType()

@@ -3,10 +3,8 @@
 namespace Infrastructure.Models;
 
 [Table("order_items")]
-public sealed class OrderItem
+public sealed class OrderItem : ITableEntity<Guid>
 {
-    [PrimaryKey]
-    [Column("id")]
     public Guid Id { get; set; }
 
     [Column("order_id")]

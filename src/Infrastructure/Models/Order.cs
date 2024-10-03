@@ -4,10 +4,8 @@ using LinqToDB.Mapping;
 namespace Infrastructure.Models;
 
 [Table("orders")]
-public sealed class Order
+public sealed class Order : ITableEntity<Guid>
 {
-    [PrimaryKey]
-    [Column("id")]
     public Guid Id { get; set; }
 
     [Column("created_at")]

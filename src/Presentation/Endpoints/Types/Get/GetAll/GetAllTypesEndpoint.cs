@@ -1,4 +1,5 @@
-﻿using Application.Queries.Types.GetAll;
+﻿using Application.Queries.Common;
+using Application.Queries.Types.GetAll;
 using FastEndpoints;
 using Mapster;
 using Mediator;
@@ -7,7 +8,7 @@ using Presentation.Endpoints.Types.Common;
 
 namespace Presentation.Endpoints.Types.Get.GetAll;
 
-public sealed class GetAllTypesEndpoint(ISender _sender) : EndpointWithoutRequest<IEnumerable<TypeDto>>
+public sealed class GetAllTypesEndpoint(ISender _sender) : Endpoint<GetAllTypesRequest, Pagination<TypeDto>>
 {
     public override void Configure()
     {
@@ -15,10 +16,24 @@ public sealed class GetAllTypesEndpoint(ISender _sender) : EndpointWithoutReques
         Options(x => x.WithTags("Types"));
     }
 
-    public override async Task HandleAsync(CancellationToken token)
+    public override async Task HandleAsync(GetAllTypesRequest request, CancellationToken token)
     {
-        var response = await _sender.Send(new GetAllTypesQuery(), token);
+        var response = await _sender.Send
+        (
+            new GetAllTypesQuery
+            (
+                new PaginationMeta
+                (
+                    request.Page, 
+                    new PaginationApi
+                    (
+                        HttpContext.Request.Path,
+                                    HttpContext.Request.QueryString.ToString()
+                    )
+                )
+            ), token
+        );
 
-        Response = response.Adapt<IEnumerable<TypeDto>>();
+        Response = response.MapItemsTo<TypeDto>();
     }
 }

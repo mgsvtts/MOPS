@@ -1,12 +1,18 @@
+using Application.Queries.Common;
 using Domain.TypeAggregate.Repositories;
+using Infrastructure.Common;
+using Infrastructure.Models;
 using Mediator;
+using Newtonsoft.Json.Linq;
 
 namespace Application.Queries.Types.GetAll;
 
-public sealed class GetAllTypesQueryHandler(ITypeRepository _repository) : IQueryHandler<GetAllTypesQuery, IEnumerable<Domain.TypeAggregate.Type>>
+public sealed class GetAllTypesQueryHandler : IQueryHandler<GetAllTypesQuery, Pagination<Infrastructure.Models.Type>>
 {
-    public async ValueTask<IEnumerable<Domain.TypeAggregate.Type>> Handle(GetAllTypesQuery request, CancellationToken cancellationToken)
+    public async ValueTask<Pagination<Infrastructure.Models.Type>> Handle(GetAllTypesQuery request, CancellationToken cancellationToken)
     {
-        return await _repository.GetAllAsync(cancellationToken);
+        using var db = new DbConnection();
+
+        return await db.Types.PaginateAsync<Infrastructure.Models.Type, Guid>(request.Meta, cancellationToken);
     }
 }

@@ -1,3 +1,4 @@
+using Application.Queries.Common;
 using CloudinaryDotNet;
 using Domain.MerchItemAggregate.Repositories;
 using Domain.OrderAggregate.Repositories;
@@ -41,6 +42,8 @@ public static class ProgramExtensions
 
     public static WebApplicationBuilder AddApplication(this WebApplicationBuilder builder)
     {
+        PaginationLinks.SetUrls(builder.Configuration.GetValue<string>("Urls:ServerUrl")!);
+
         builder.Services.RegisterMapsterConfiguration();
 
         builder.Services.AddMediator(config =>

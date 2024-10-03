@@ -3,10 +3,8 @@
 namespace Infrastructure.Models;
 
 [Table("images")]
-public sealed class Image
+public sealed class Image : ITableEntity<Guid>
 {
-    [PrimaryKey]
-    [Column("id")]
     public Guid Id { get; set; }
 
     [Column("merch_item_id")]

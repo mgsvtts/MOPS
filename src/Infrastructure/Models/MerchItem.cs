@@ -3,10 +3,8 @@
 namespace Infrastructure.Models;
 
 [Table("merch_items")]
-public sealed class MerchItem
+public sealed class MerchItem : ITableEntity<Guid>
 {
-    [PrimaryKey]
-    [Column("id")]
     public Guid Id { get; set; }
 
     [Column("type_id")]

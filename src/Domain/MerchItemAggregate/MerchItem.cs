@@ -59,14 +59,14 @@ public sealed class MerchItem : AggregateRoot<MerchItemId>
         return this;
     }
 
-    public float GetBenefitPercent()
+    public decimal GetBenefitPercent()
     {
         if (Price == SelfPrice)
         {
             return 0;
         }
 
-        return (float)(Price.Value / SelfPrice.Value);
+        return Price.Value / SelfPrice.Value;
     }
 
     public MerchItem WithTypeId(TypeId typeId)

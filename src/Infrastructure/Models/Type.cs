@@ -3,10 +3,8 @@
 namespace Infrastructure.Models;
 
 [Table("types")]
-public sealed class Type
+public sealed class Type : ITableEntity<Guid>
 {
-    [PrimaryKey]
-    [Column("id")]
     public Guid Id { get; set; }
 
     [Column("name")]

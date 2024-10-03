@@ -1,23 +1,25 @@
-﻿using Infrastructure.Common;
+﻿using Application.Queries.Common;
+using Infrastructure.Common;
+using Infrastructure.Models;
 using LinqToDB;
 using Mapster;
 using Mediator;
 
 namespace Application.Queries.Orders.GetAll;
 
-public sealed class GetAllOrdersQueryHandler : IQueryHandler<GetAllOrdersQuery, List<GetAllOrdersResponseOrder>>
+public sealed class GetAllOrdersQueryHandler : IQueryHandler<GetAllOrdersQuery, Pagination<GetAllOrdersResponseOrder>>
 {
-    public async ValueTask<List<GetAllOrdersResponseOrder>> Handle(GetAllOrdersQuery request, CancellationToken cancellationToken)
+    public async ValueTask<Pagination<GetAllOrdersResponseOrder>> Handle(GetAllOrdersQuery request, CancellationToken cancellationToken)
     {
         using var db = new DbConnection();
 
-        var dbOrders = await db.Orders
+        var pagination = await db.Orders
             .LoadWith(x => x.OrderItems)
                 .ThenLoad(x => x.MerchItem.Type)
             .LoadWith(x => x.OrderItems)
                 .ThenLoad(x => x.Order)
-            .ToListAsync(cancellationToken);
+            .PaginateAsync<Order, Guid>(request.Meta, cancellationToken);
 
-        return dbOrders.Adapt<List<GetAllOrdersResponseOrder>>();
+        return pagination.MapItemsTo<GetAllOrdersResponseOrder>();
     }
 }

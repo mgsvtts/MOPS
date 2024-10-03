@@ -1,6 +1,7 @@
-﻿using Domain.MerchItemAggregate;
+﻿using Application.Queries.Common;
+using Domain.MerchItemAggregate;
 using Mediator;
 
 namespace Application.Queries.MerchItems.GetAll;
-public sealed record GetAllMerchItemsQuery(bool ShowNotAvailable,
-                                           MerchItemSort Sort) : IQuery<List<MerchItem>>;
+public sealed record GetAllMerchItemsQuery(MerchItemSort Sort,
+                                           PaginationMeta Meta) : IQuery<Pagination<MerchItem>>;
